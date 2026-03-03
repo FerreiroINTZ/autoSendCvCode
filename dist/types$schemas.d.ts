@@ -1,5 +1,19 @@
 import { z } from "zod";
 import { GoogleGenAI } from "@google/genai";
+export declare const Sites: readonly ["linkedin", "indeed", "infojobs"];
+export declare const UserConfigSchema: z.ZodObject<{
+    site: z.ZodEnum<{
+        linkedin: "linkedin";
+        indeed: "indeed";
+        infojobs: "infojobs";
+    }>;
+    keywords: z.ZodArray<z.ZodString>;
+    aiKey: z.ZodString;
+    area: z.ZodOptional<z.ZodString>;
+    knowledge: z.ZodOptional<z.ZodArray<z.ZodString>>;
+    cidade: z.ZodOptional<z.ZodString>;
+}, z.core.$strict>;
+export type UserConfig = z.infer<typeof UserConfigSchema>;
 export declare const ConfigSchema: z.ZodObject<{
     site: z.ZodEnum<{
         linkedin: "linkedin";

@@ -22,7 +22,8 @@ class ControlerConfigurator {
         if (!driver) {
             throw new Error("Driver invalido!");
         }
-        const statement = types_schemas_1.ConfigSchema.safeParse(userConfigs);
+        // verifica os dados recebidos pelo usuario
+        const statement = types_schemas_1.UserConfigSchema.safeParse(userConfigs);
         if (!statement.success) {
             // console.log(statement.error)
             throw new Error("Configuracoes invalidas");
@@ -46,6 +47,7 @@ class ControlerConfigurator {
     }
     // configura a URL para cada opcao
     static sitesDefaultsConfigs(word) {
+        // tem que tipar esse objeto
         const opts = {
             linkedin: {
                 host: `https://${word}.com`,
@@ -70,6 +72,37 @@ class ControlerConfigurator {
         return __awaiter(this, void 0, void 0, function* () {
             yield apiInstance.models.list();
         });
+    }
+    static instantiateGoogleGenAI(currConf) {
+        const ai = new genai_1.GoogleGenAI({ apiKey: currConf.aiKey });
+        return Object.assign(Object.assign({}, currConf), { ai });
+    }
+    // pega todos os dados e transformar no Objeto valido de configuracao
+    // basicamente: transformar a URL e cria a instancia da AI
+    static parseConfigs(userData) {
+        let config = this.transformUrlOnConfigProperty(userData);
+        config = this.instantiateGoogleGenAI(config);
+        return config;
+    }
+    static setElementsTag(site) {
+        const opts = {
+            linkedin: {
+                lista: `//*[@id="main"]/div/div[2]/div[1]/div/ul`,
+                singleVacancy: `//*[@id="ember165"]/div/div`,
+                vacancyDescriptionTag: `//*[@id="job-details"]/div/p`
+            },
+            indeed: {
+                lista: ``,
+                singleVacancy: "",
+                vacancyDescriptionTag: ""
+            },
+            infojobs: {
+                lista: ``,
+                singleVacancy: "",
+                vacancyDescriptionTag: ""
+            },
+        };
+        return opts[site];
     }
 }
 exports.default = ControlerConfigurator;

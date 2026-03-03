@@ -22,18 +22,21 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _Controler_databaseConnection, _Controler_configs, _Controler_driver;
+var _Controler_databaseConnection, _Controler_configs, _Controler_driver, _Controler_elements;
 const ControlerConfigurator_1 = __importDefault(require("./ControlerConfigurator"));
 class Controler {
     constructor(data) {
         _Controler_databaseConnection.set(this, void 0);
         _Controler_configs.set(this, void 0);
         _Controler_driver.set(this, void 0);
+        _Controler_elements.set(this, void 0);
         // faz as verificacoes basicas
         ControlerConfigurator_1.default.basicVerificantionsOfUserConfigParam(data);
-        __classPrivateFieldSet(this, _Controler_configs, ControlerConfigurator_1.default.transformUrlOnConfigProperty(data.userConfigs), "f");
+        __classPrivateFieldSet(this, _Controler_configs, ControlerConfigurator_1.default.parseConfigs(data.userConfigs), "f");
+        // Configurator.transformUrlOnConfigProperty(data.userConfigs)
         __classPrivateFieldSet(this, _Controler_databaseConnection, data.dbConn, "f");
         __classPrivateFieldSet(this, _Controler_driver, data.driver, "f");
+        __classPrivateFieldSet(this, _Controler_elements, ControlerConfigurator_1.default.setElementsTag(data.userConfigs.site), "f");
     }
     getWebSite() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -42,12 +45,13 @@ class Controler {
     }
     getRequirements() {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(__classPrivateFieldGet(this, _Controler_configs, "f").ai);
         });
     }
     getProperties() {
-        console.log(__classPrivateFieldGet(this, _Controler_configs, "f"));
+        console.log(__classPrivateFieldGet(this, _Controler_elements, "f"));
     }
 }
-_Controler_databaseConnection = new WeakMap(), _Controler_configs = new WeakMap(), _Controler_driver = new WeakMap();
+_Controler_databaseConnection = new WeakMap(), _Controler_configs = new WeakMap(), _Controler_driver = new WeakMap(), _Controler_elements = new WeakMap();
 module.exports = Controler;
 //# sourceMappingURL=Controler.js.map

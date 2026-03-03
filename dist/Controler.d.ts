@@ -2,7 +2,7 @@ import { Configuracao } from "./types$schemas";
 declare class Controler {
     #private;
     constructor(data: {
-        dbConn: Object;
+        dbConn: any;
         userConfigs: Configuracao;
         driver: any;
     });

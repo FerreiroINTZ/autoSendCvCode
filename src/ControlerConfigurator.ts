@@ -1,11 +1,16 @@
 import {GoogleGenAI} from "@google/genai"
-import {ConfigSchema, Configuracao} from "./types$schemas"
+import {
+    ConfigSchema, 
+    Configuracao, 
+    UserConfigSchema,
+    UserConfig
+} from "./types$schemas"
 
 class ControlerConfigurator{
     
     static basicVerificantionsOfUserConfigParam(
         {userConfigs, dbConn, driver}: 
-        {userConfigs: any, dbConn: any, driver: any}){
+        {userConfigs: UserConfig, dbConn: any, driver: any}){
         
         if(typeof userConfigs != "object"){
             throw new Error("Configuracoes tem que ser um Objeto!")
@@ -17,7 +22,8 @@ class ControlerConfigurator{
             throw new Error("Driver invalido!")
         }
 
-        const statement = ConfigSchema.safeParse(userConfigs)
+        // verifica os dados recebidos pelo usuario
+        const statement = UserConfigSchema.safeParse(userConfigs)
         if(!statement.success){
             // console.log(statement.error)
             throw new Error("Configuracoes invalidas")
@@ -33,7 +39,7 @@ class ControlerConfigurator{
 
     // da pra, ao invez de definir cada apropriedade, retornar um objeto com tudo ja configurado em apenas um
     // configura a URL basica
-    static transformUrlOnConfigProperty(configs: any){
+    static transformUrlOnConfigProperty(configs: Configuracao){
         const newObj = {...configs}
         newObj.url = new URL(this.sitesDefaultsConfigs(configs.site).host)
         newObj.url.pathname = this.sitesDefaultsConfigs(configs.site).pathname
@@ -44,6 +50,7 @@ class ControlerConfigurator{
     // configura a URL para cada opcao
     static sitesDefaultsConfigs(word: string){
 
+        // tem que tipar esse objeto
         const opts: any = 
         {
             linkedin: {
@@ -69,6 +76,42 @@ class ControlerConfigurator{
     // teste se a chave da API e valida
     static async testeAiAPI(apiInstance: GoogleGenAI){
         await apiInstance.models.list()
+    }
+
+    static instantiateGoogleGenAI(currConf: Configuracao){
+        const ai = new GoogleGenAI({apiKey: currConf.aiKey})
+        return {...currConf, ai}
+    }
+
+    // pega todos os dados e transformar no Objeto valido de configuracao
+    // basicamente: transformar a URL e cria a instancia da AI
+    static parseConfigs(userData: UserConfig){
+        let config = this.transformUrlOnConfigProperty(userData)
+        config = this.instantiateGoogleGenAI(config)
+        return config
+    }
+
+    static setElementsTag(site: string){
+        const opts: any = 
+        {
+            linkedin: {
+                lista: `//*[@id="main"]/div/div[2]/div[1]/div/ul`,
+                singleVacancy: `//*[@id="ember165"]/div/div`,
+                vacancyDescriptionTag: `//*[@id="job-details"]/div/p`
+            },
+            indeed: {
+                lista: ``,
+                singleVacancy: "",
+                vacancyDescriptionTag: ""
+            },
+            infojobs: {
+                lista: ``,
+                singleVacancy: "",
+                vacancyDescriptionTag: ""
+            },
+        }
+
+        return opts[site]
     }
 }
 
