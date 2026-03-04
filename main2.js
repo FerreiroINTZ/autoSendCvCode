@@ -8,12 +8,12 @@ async function main(){
 
     const db = new Pool({
         user: "nk_gb7",
-        password: "nk",
+        password: process.env.DBPASSWD,
         port: 5432,
         database: "cvautomation"
     })
 
-    const{rows} = await db.query("SELECT CURRENT_TIME")
+    const{rows} = await db.query("SELECT current_role")
     console.log(rows)
 
     const options = new chrome.Options()

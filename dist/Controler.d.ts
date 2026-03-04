@@ -7,9 +7,10 @@ declare class Controler {
         driver: any;
     });
     getWebSite(): Promise<void>;
-    getDescriptionsInfos(): Promise<void>;
+    asAiForGetDescDetais(descText: string): Promise<void>;
+    getDescriptionsInfos(): Promise<any[]>;
     getBasicInfos(): Promise<void>;
-    getRequirements(): Promise<void>;
+    saveVacancyOnDataBase(data: any): Promise<void>;
     getProperties(): void;
 }
 export = Controler;

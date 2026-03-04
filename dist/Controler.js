@@ -53,11 +53,8 @@ class Controler {
             yield __classPrivateFieldGet(this, _Controler_driver, "f").get(__classPrivateFieldGet(this, _Controler_configs, "f").url.href);
         });
     }
-    getDescriptionsInfos() {
+    asAiForGetDescDetais(descText) {
         return __awaiter(this, void 0, void 0, function* () {
-            const descriptionTag = __classPrivateFieldGet(this, _Controler_driver, "f").findElement(selenium_webdriver_1.By.xpath(__classPrivateFieldGet(this, _Controler_elements, "f").vacancyDescriptionTag));
-            const descText = yield descriptionTag.getText();
-            console.log(descText);
             const resp = yield __classPrivateFieldGet(this, _Controler_iaSDK, "f").models.generateContent({
                 model: "gemini-3-flash-preview",
                 contents: `analise a seguinte descricao, identifique as informacoes do schema e retorne um josn com o schema prenchido: 
@@ -70,52 +67,90 @@ class Controler {
             console.log(resp.text);
         });
     }
+    getDescriptionsInfos() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const descriptionTag = __classPrivateFieldGet(this, _Controler_driver, "f").findElement(selenium_webdriver_1.By.xpath(__classPrivateFieldGet(this, _Controler_elements, "f").vacancyDescriptionTag));
+            const descText = yield descriptionTag.getText();
+            // console.log(descText)
+            // const requisitos = await this.asAiForGetDescDetais(descText)
+            const requisitos = [];
+            return [descText, requisitos];
+        });
+    }
     getBasicInfos() {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, e_1, _b, _c;
+            var _d;
             // pega a lista
             const lista = yield __classPrivateFieldGet(this, _Controler_driver, "f").findElement(selenium_webdriver_1.By.xpath(__classPrivateFieldGet(this, _Controler_elements, "f").lista));
             // <li>s
             const elements = yield lista.findElements(selenium_webdriver_1.By.css(":scope > *"));
             console.log(elements.length);
             try {
-                for (var _d = true, elements_1 = __asyncValues(elements), elements_1_1; elements_1_1 = yield elements_1.next(), _a = elements_1_1.done, !_a; _d = true) {
+                for (var _e = true, elements_1 = __asyncValues(elements), elements_1_1; elements_1_1 = yield elements_1.next(), _a = elements_1_1.done, !_a; _e = true) {
                     _c = elements_1_1.value;
-                    _d = false;
+                    _e = false;
                     const item = _c;
                     yield __classPrivateFieldGet(this, _Controler_driver, "f").executeScript("arguments[0].scrollIntoView()", item);
                     yield item.click();
                     const slw = yield item.findElements(selenium_webdriver_1.By.css(":scope > div > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div"));
                     console.log(slw.length);
-                    const title = yield slw[0].getText();
+                    let title = yield slw[0].getText();
+                    title = title.split("\n")[0];
+                    console.log(title);
+                    const { rows } = yield __classPrivateFieldGet(this, _Controler_databaseConnection, "f").query("SELECT titulo FROM vagas WHERE titulo = $1", [title]);
+                    console.log(rows);
+                    // se o titulo ja existir passa pro proximo
+                    if (rows.length) {
+                        if (((_d = rows[0]) === null || _d === void 0 ? void 0 : _d.titulo) == title)
+                            continue;
+                    }
                     const empresa = yield slw[1].getText();
                     const regiao = yield slw[2].getText();
-                    console.log(title.split("\n")[0]);
                     console.log(empresa);
                     console.log(regiao);
                     const currentUrl = yield __classPrivateFieldGet(this, _Controler_driver, "f").getCurrentUrl();
-                    const url = new URLSearchParams(currentUrl);
-                    const jobId = url.get("currentJobId");
-                    console.log(jobId);
+                    const url = new URL(currentUrl);
+                    const jobId = url.searchParams.get("currentJobId");
+                    console.log(`\x1b[33m ${jobId} \x1b[30,`);
                     console.log("\n");
-                    // await this.getDescriptionsInfos()
+                    const [descricao, requisitos] = yield this.getDescriptionsInfos();
+                    const data = {
+                        title,
+                        empresa,
+                        regiao,
+                        descricao,
+                        keywords: __classPrivateFieldGet(this, _Controler_configs, "f").keywords,
+                        site: __classPrivateFieldGet(this, _Controler_configs, "f").site,
+                        jobId,
+                        // requisitos,
+                        // currentUrl,
+                    };
+                    this.saveVacancyOnDataBase(data);
                     break;
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (!_d && !_a && (_b = elements_1.return)) yield _b.call(elements_1);
+                    if (!_e && !_a && (_b = elements_1.return)) yield _b.call(elements_1);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
         });
     }
-    getRequirements() {
+    saveVacancyOnDataBase(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            const lista = yield __classPrivateFieldGet(this, _Controler_driver, "f").findElement(selenium_webdriver_1.By.xpath(__classPrivateFieldGet(this, _Controler_elements, "f").lista));
+            console.log("\x1b[32m ==========================");
+            const conn = yield __classPrivateFieldGet(this, _Controler_databaseConnection, "f").connect();
+            // await this.#databaseConnection.connect()
+            yield conn.query("INSERT INTO vagas(titulo, empresa, cidade, keywords, plataforma) VALUES ($1, $2, $3, $4, $5)", [data.title, data.empresa, data.regiao, data.keywords, data.site]);
+            conn.release();
         });
     }
+    // async getRequirements(){
+    //     const lista = await this.#driver.findElement(By.xpath(this.#elements.lista))
+    // }
     getProperties() {
         console.log(__classPrivateFieldGet(this, _Controler_driver, "f"));
     }
