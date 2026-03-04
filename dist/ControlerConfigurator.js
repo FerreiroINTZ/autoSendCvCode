@@ -25,7 +25,7 @@ class ControlerConfigurator {
         // verifica os dados recebidos pelo usuario
         const statement = types_schemas_1.UserConfigSchema.safeParse(userConfigs);
         if (!statement.success) {
-            // console.log(statement.error)
+            console.log(statement.error);
             throw new Error("Configuracoes invalidas");
         }
         try {
@@ -73,33 +73,44 @@ class ControlerConfigurator {
             yield apiInstance.models.list();
         });
     }
-    static instantiateGoogleGenAI(currConf) {
-        const ai = new genai_1.GoogleGenAI({ apiKey: currConf.aiKey });
-        return Object.assign(Object.assign({}, currConf), { ai });
+    static instantiateGoogleGenAI(apiKey) {
+        const ai = new genai_1.GoogleGenAI({ apiKey });
+        return ai;
     }
     // pega todos os dados e transformar no Objeto valido de configuracao
     // basicamente: transformar a URL e cria a instancia da AI
     static parseConfigs(userData) {
         let config = this.transformUrlOnConfigProperty(userData);
-        config = this.instantiateGoogleGenAI(config);
+        // config = this.instantiateGoogleGenAI(config)
         return config;
     }
     static setElementsTag(site) {
         const opts = {
             linkedin: {
+                // xpath
                 lista: `//*[@id="main"]/div/div[2]/div[1]/div/ul`,
-                singleVacancy: `//*[@id="ember165"]/div/div`,
-                vacancyDescriptionTag: `//*[@id="job-details"]/div/p`
+                // css
+                singleVacancy: `:scope > li`,
+                title: `//div[@class="ember-view"]/span[1]/strong`,
+                empresa: `//*[@id="ember153"]/span`,
+                regiao: `//*[@id="ember154"]/ul/li/span`,
+                vacancyDescriptionTag: `//*[@id="job-details"]/div/p`,
             },
             indeed: {
                 lista: ``,
-                singleVacancy: "",
-                vacancyDescriptionTag: ""
+                singleVacancy: ``,
+                title: ``,
+                empresa: ``,
+                regiao: ``,
+                vacancyDescriptionTag: ``
             },
             infojobs: {
                 lista: ``,
-                singleVacancy: "",
-                vacancyDescriptionTag: ""
+                singleVacancy: ``,
+                title: ``,
+                empresa: ``,
+                regiao: ``,
+                vacancyDescriptionTag: ``
             },
         };
         return opts[site];

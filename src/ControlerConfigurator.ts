@@ -3,7 +3,9 @@ import {
     ConfigSchema, 
     Configuracao, 
     UserConfigSchema,
-    UserConfig
+    UserConfig,
+    ListaDeSites,
+    Elements
 } from "./types$schemas"
 
 class ControlerConfigurator{
@@ -25,7 +27,7 @@ class ControlerConfigurator{
         // verifica os dados recebidos pelo usuario
         const statement = UserConfigSchema.safeParse(userConfigs)
         if(!statement.success){
-            // console.log(statement.error)
+            console.log(statement.error)
             throw new Error("Configuracoes invalidas")
         }
 
@@ -78,16 +80,16 @@ class ControlerConfigurator{
         await apiInstance.models.list()
     }
 
-    static instantiateGoogleGenAI(currConf: Configuracao){
-        const ai = new GoogleGenAI({apiKey: currConf.aiKey})
-        return {...currConf, ai}
+    static instantiateGoogleGenAI(apiKey: string){
+        const ai = new GoogleGenAI({apiKey})
+        return ai
     }
 
     // pega todos os dados e transformar no Objeto valido de configuracao
     // basicamente: transformar a URL e cria a instancia da AI
     static parseConfigs(userData: UserConfig){
         let config = this.transformUrlOnConfigProperty(userData)
-        config = this.instantiateGoogleGenAI(config)
+        // config = this.instantiateGoogleGenAI(config)
         return config
     }
 
@@ -95,19 +97,30 @@ class ControlerConfigurator{
         const opts: any = 
         {
             linkedin: {
+                // xpath
                 lista: `//*[@id="main"]/div/div[2]/div[1]/div/ul`,
-                singleVacancy: `//*[@id="ember165"]/div/div`,
-                vacancyDescriptionTag: `//*[@id="job-details"]/div/p`
+                // css
+                singleVacancy: `:scope > li`,
+                title: `//div[@class="ember-view"]/span[1]/strong`,
+                empresa: `//*[@id="ember153"]/span`,
+                regiao: `//*[@id="ember154"]/ul/li/span`,
+                vacancyDescriptionTag: `//*[@id="job-details"]/div/p`,
             },
             indeed: {
                 lista: ``,
-                singleVacancy: "",
-                vacancyDescriptionTag: ""
+                singleVacancy: ``,
+                title: ``,
+                empresa: ``,
+                regiao: ``,
+                vacancyDescriptionTag: ``
             },
             infojobs: {
                 lista: ``,
-                singleVacancy: "",
-                vacancyDescriptionTag: ""
+                singleVacancy: ``,
+                title: ``,
+                empresa: ``,
+                regiao: ``,
+                vacancyDescriptionTag: ``
             },
         }
 

@@ -9,6 +9,8 @@ export const Sites = [
     'infojobs'
 ] as const
 
+export type ListaDeSites = typeof Sites[number]
+
 const EnumSites = z.enum(Sites)
 
 // ============= configs do usuario
@@ -49,8 +51,21 @@ type SiteDefaultConfigs = {
     search: string
 }
 
-type Elements = {
+export type Elements = {
     lista: string,
     singleVacancy: string,
+    title: string,
+    empresa: string,
+    regiao: string,
     vacancyDescriptionTag: string,
 }
+
+// ================ Descriptionn Schema
+
+const DescriptionsSchema = z.object({
+    salario: z.number().describe("o salario pago pela vaga"),
+    requisitos: z.array(z.string()).describe("os requisitos que a vaga pede para nela"),
+    area: z.string().describe("qual area a vaga faz parte, com base nas habilidades")
+})
+
+export const DescriptionSchemaParsed = z.toJSONSchema(DescriptionsSchema)

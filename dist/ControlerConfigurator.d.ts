@@ -18,16 +18,7 @@ declare class ControlerConfigurator {
     };
     static sitesDefaultsConfigs(word: string): any;
     static testeAiAPI(apiInstance: GoogleGenAI): Promise<void>;
-    static instantiateGoogleGenAI(currConf: Configuracao): {
-        ai: GoogleGenAI;
-        site: "linkedin" | "indeed" | "infojobs";
-        keywords: string[];
-        aiKey: string;
-        url?: URL | undefined;
-        area?: string | undefined;
-        knowledge?: string[] | undefined;
-        cidade?: string | undefined;
-    };
+    static instantiateGoogleGenAI(apiKey: string): GoogleGenAI;
     static parseConfigs(userData: UserConfig): {
         site: "linkedin" | "indeed" | "infojobs";
         keywords: string[];

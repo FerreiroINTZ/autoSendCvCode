@@ -7,6 +7,8 @@ declare class Controler {
         driver: any;
     });
     getWebSite(): Promise<void>;
+    getDescriptionsInfos(): Promise<void>;
+    getBasicInfos(): Promise<void>;
     getRequirements(): Promise<void>;
     getProperties(): void;
 }

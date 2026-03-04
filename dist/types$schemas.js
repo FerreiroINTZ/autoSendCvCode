@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConfigSchema = exports.UserConfigSchema = exports.Sites = void 0;
+exports.DescriptionSchemaParsed = exports.ConfigSchema = exports.UserConfigSchema = exports.Sites = void 0;
 const zod_1 = require("zod");
 const genai_1 = require("@google/genai");
 // isso cria um Enum
@@ -32,4 +32,11 @@ exports.ConfigSchema = zod_1.z.object({
     knowledge: zod_1.z.array(zod_1.z.string()).optional(),
     cidade: zod_1.z.string().optional(),
 }).strict();
+// ================ Descriptionn Schema
+const DescriptionsSchema = zod_1.z.object({
+    salario: zod_1.z.number().describe("o salario pago pela vaga"),
+    requisitos: zod_1.z.array(zod_1.z.string()).describe("os requisitos que a vaga pede para nela"),
+    area: zod_1.z.string().describe("qual area a vaga faz parte, com base nas habilidades")
+});
+exports.DescriptionSchemaParsed = zod_1.z.toJSONSchema(DescriptionsSchema);
 //# sourceMappingURL=types$schemas.js.map

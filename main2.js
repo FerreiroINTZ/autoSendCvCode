@@ -1,8 +1,20 @@
 const {Builder} = require("selenium-webdriver")
 const chrome = require("selenium-webdriver/chrome")
 const Contoler = require("./dist/Controler")
+require("dotenv").config()
+const {Pool} = require("pg")
 
 async function main(){
+
+    const db = new Pool({
+        user: "nk_gb7",
+        password: "nk",
+        port: 5432,
+        database: "cvautomation"
+    })
+
+    const{rows} = await db.query("SELECT CURRENT_TIME")
+    console.log(rows)
 
     const options = new chrome.Options()
     options.addArguments("user-data-dir=driver")
@@ -13,13 +25,13 @@ async function main(){
     .build()
     console.log("iniciado")
 
-    const dbConn = {}
-    const configs = {site: "infojobs", keywords: ["front"]}
-    const driverObj = driver
+    const dbConn = db
+    const userConfigs = {site: "linkedin", keywords: ["front"], aiKey: process.env.AIAPIKEY}
 
-    const controler = new Contoler({dbConn, configs, driver: driverObj})
+    const controler = new Contoler({dbConn, userConfigs, driver})
     
     await controler.getWebSite()
+    const slw = await controler.getBasicInfos()
 
     // driver.quit()
 }
