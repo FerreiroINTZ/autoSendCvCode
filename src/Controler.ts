@@ -137,6 +137,11 @@ class Controler{
         console.log(elements.length)
         let qtd = 1
         for await (const item of elements){
+            
+            // lista quantos ja foram em comparacao aos que faltam
+            process.stdout.write(`${qtd}/${elements.length}`)
+            qtd++
+
             await this.#driver.executeScript("arguments[0].scrollIntoView()", item)
             await item.click()
             const slw = await item.findElements(By.css(":scope > div > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div"))
@@ -151,6 +156,7 @@ class Controler{
             // se o titulo ja existir passa pro proximo
             if(rows.length){
                 if(rows[0]?.jobid == jobId)
+                    console.log("\x1b[33m Ja existe essa vaga! \x1b[30m")
                     continue
             }
             
@@ -195,9 +201,7 @@ class Controler{
                 // requisitos,
             }
             // salva no banco
-            // this.saveVacancyOnDataBase(data)
-            console.log(`${qtd}/${elements.length}`)
-            qtd++
+            await this.saveVacancyOnDataBase(data)
             // break
     }
     console.log("Terminol!")
@@ -205,7 +209,6 @@ class Controler{
 
     // salva no banco
     async saveVacancyOnDataBase(data: any){
-        console.log("\x1b[32m ==========================")
         const conn = await this.#databaseConnection.connect()
         // await this.#databaseConnection.connect()
         const {rows: desc} = await conn.query("INSERT INTO descricoes (descricao) VALUES ($1) RETURNING id", [data.descricao])
@@ -216,9 +219,12 @@ class Controler{
             
             // se falhar ele apaga a descricao, pra ela nao ficar sozinha
         }catch(e){
+            console.log("\x1b[32m Erro ao salvar no Banco! \x1b[30m")
             await conn.query("DELETE FROM descricoes WHERE id = $1", [desc_id])
-        }
+        }finally{
+            console.log("\x1b[32m Salvo no Banco! \x1b[30m ")
             conn.release()
+        }
     }
 
     // async getRequirements(){
