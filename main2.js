@@ -21,6 +21,8 @@ async function main(){
         // "--start-maximized"
     )
 
+    options.excludeSwitches("enable-automation")
+
     const driver = new Builder()
     .forBrowser("chrome")
     .setChromeOptions(options)

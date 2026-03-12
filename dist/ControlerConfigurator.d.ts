@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { Configuracao, UserConfig } from "./types$schemas";
+import { Configuracao, UserConfig } from "./types/types$schemas";
 declare class ControlerConfigurator {
     static basicVerificantionsOfUserConfigParam({ userConfigs, dbConn, driver }: {
         userConfigs: UserConfig;

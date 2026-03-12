@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const ControlerConfigurator_1 = __importDefault(require("./ControlerConfigurator"));
-const types_schemas_1 = require("./types$schemas");
+const types_schemas_1 = require("./types/types$schemas");
 const selenium_webdriver_1 = require("selenium-webdriver");
 const fs_1 = __importDefault(require("fs"));
-class Controler {
+const ControlerUtils_1 = __importDefault(require("./ControlerUtils"));
+class Controler extends ControlerUtils_1.default {
     #databaseConnection;
     #configs;
     #driver;
@@ -15,11 +16,14 @@ class Controler {
     constructor(data) {
         // faz as verificacoes basicas
         ControlerConfigurator_1.default.basicVerificantionsOfUserConfigParam(data);
+        // seta as propriedades da classe Utils
+        const elements = ControlerConfigurator_1.default.setElementsTag(data.userConfigs.site);
+        super(data.driver, elements);
         this.#configs = ControlerConfigurator_1.default.parseConfigs(data.userConfigs);
         this.#configs.paginas = data.userConfigs.paginas || 1;
         this.#databaseConnection = data.dbConn;
         this.#driver = data.driver;
-        this.#elements = ControlerConfigurator_1.default.setElementsTag(data.userConfigs.site);
+        this.#elements = elements;
         this.#iaSDK = ControlerConfigurator_1.default.instantiateGoogleGenAI(data.userConfigs.aiKey);
         console.log(this.#configs.paginas);
     }
@@ -27,22 +31,26 @@ class Controler {
     async getWebSite() {
         await this.#driver.manage().window().setRect({ width: 1000, heigth: 700 });
         await this.#driver.get(this.#configs.url.href);
+        console.log(this.#configs.url.href);
         this.#driver.sleep(6000);
-        await this.doResearch();
+        // await this.doResearch()
     }
-    async doResearch() {
-        console.log("ssasasass");
-        const keywordInput = await this.#driver.wait(selenium_webdriver_1.until.elementLocated(selenium_webdriver_1.By.xpath('//*[@id="root"]/div[2]/div[2]/div[1]/header/div/div/div/div[2]/div/div/div/div/div[1]/div/div/input')), 8000);
-        const cityInput = await this.#driver.wait(selenium_webdriver_1.until.elementLocated(selenium_webdriver_1.By.xpath('//*[@id="root"]/div[2]/div[2]/div[1]/header/div/div/div/div[2]/div/div/div/div/div[2]/div/input')), 5000);
-        await keywordInput.sendKeys(this.#configs.searchWords[0]);
-        await cityInput.sendKeys(this.#configs.cidade);
-        await cityInput.sendKeys(selenium_webdriver_1.Key.ENTER);
-    }
+    // faz a pesquisa, usando os inputs para isso
+    // isso vai ficar obsoleto
+    //
+    // async doResearch(){
+    //     const keywordInput = await this.#driver.wait(until.elementLocated(By.xpath('//*[@id="root"]/div[2]/div[2]/div[1]/header/div/div/div/div[2]/div/div/div/div/div[1]/div/div/input')), 8000)
+    //     const cityInput = await this.#driver.wait(until.elementLocated(By.xpath('//*[@id="root"]/div[2]/div[2]/div[1]/header/div/div/div/div[2]/div/div/div/div/div[2]/div/input')), 5000)
+    //     await keywordInput.sendKeys(this.#configs.searchWords[0])
+    //     await cityInput.sendKeys(this.#configs.cidade)
+    //     await cityInput.sendKeys(Key.ENTER)
+    //     await this.#driver.sleep(10000)
+    // }
     // manda a ia pegar as informacoes importantes
     async askAiForGetDescriptionDetais(descText) {
         const resp = await this.#iaSDK.models.generateContent({
             model: "gemini-3-flash-preview",
-            contents: `analise a seguinte descricao, identifique as informacoes do schema e retorne um josn com o schema prenchido: 
+            contents: `analise a seguinte descricao, identifique as informacoes do schema e retorne um json prenchido: 
             ${descText}`,
             config: {
                 responseMimeType: "application/json",
@@ -51,102 +59,46 @@ class Controler {
         });
         console.log(resp.text);
     }
-    // pega o texto da descricao; e joga na IA para analisar
-    async getDescriptionsInfos() {
-        // colocar um wait para a tag ul, aqui
-        const descriptionTag = this.#driver.findElement(selenium_webdriver_1.By.xpath(this.#elements.vacancyDescriptionTag));
-        const descText = await descriptionTag.getText();
-        // console.log(descText)
-        // const requisitos = await this.askAiForGetDescriptionDetais(descText)
-        const requisitos = [];
-        return [descText, requisitos];
-    }
-    // relacionado a data de publicacao
-    async getANDTranformPublishedDate() {
-        function transformaTimeInDays(number, time) {
-            let newTime = time;
-            // se o numero for mais q 1 ele sera plural
-            // entao devemos padronizar para o sinngular
-            if (number > 1) {
-                let qtd_slice = 1;
-                if (time == "meses") {
-                    qtd_slice = 2;
-                }
-                newTime = newTime.slice(0, newTime.length - qtd_slice);
-            }
-            let qtd_dias;
-            switch (newTime) {
-                case "dia":
-                    qtd_dias = number;
-                    break;
-                case "semana":
-                    qtd_dias = number * 7;
-                    break;
-                case "mes":
-                    qtd_dias = number * 30;
-                    break;
-                default:
-                    qtd_dias = 0;
-            }
-            const currentDate = new Date();
-            const pastDate = new Date(currentDate.setDate(currentDate.getDate() - Number(qtd_dias)));
-            newTime = `${pastDate.getFullYear()}-${pastDate.getMonth() + 1}-${pastDate.getDate()}`;
-            return newTime;
-        }
-        try {
-            const span = await this.#driver.wait(selenium_webdriver_1.until.elementLocated(selenium_webdriver_1.By.xpath(this.#elements.publishDate)), 5000);
-            const allSpanText = await span.getText();
-            // console.log(`\x1b[32m ${allSpanText} \x1b[30m`)
-            const { groups } = allSpanText.match(/há (?<number>\d+) (?<word>\w+)/);
-            const text = groups.word;
-            const { number } = groups;
-            const published_date = new Date(transformaTimeInDays(number, text));
-            return published_date;
-        }
-        catch (e) {
-            return null;
-        }
-    }
-    // new name: "start to get vacancies"
-    // separar em outra classe
+    // new name: "start_to_get_vacancies"
     async getBasicInfos() {
         // pega a lista <ul>
-        console.log("\x1b[31m");
-        console.log(this.#elements);
-        console.log("\x1b[30m");
         let lista;
         try {
-            console.log('===============');
-            await this.#driver.sleep(20000);
-            console.log('=================');
-            // const listas = await this.#driver.wait(until.elementLocated(By.xpath('//*[@id="main"]/div/div[2]/div[1]/div/ul')), 10 * 1000)
-            // lista = listas
+            const listas = await this.#driver.wait(selenium_webdriver_1.until.elementLocated(selenium_webdriver_1.By.xpath(this.#elements.lista)), 20 * 1000);
+            lista = listas;
             //*[@id="main"]/div/div[2]/div[1]/div/ul
-            const rpz = await this.#driver.executeScript(() => document.getElementById("main"));
-            console.log(rpz);
+            // const rpz = await this.#driver.executeScript(() => document.getElementById("main"))
+            // console.log(await rpz.getTagName())
         }
         catch (e) {
             //*[@id="main"]/div/div[2]/div[1]/div/ul
             const shot = await this.#driver.takeScreenshot();
             await fs_1.default.promises.writeFile("./photo.png", shot, "base64");
-            throw new Error("Tempo esgotado");
+            throw new Error("Lista (<ul>) nao encontrado!");
         }
-        return null;
+        finally {
+            // this.#driver.quit()
+        }
         // <li>s
         const elements = await lista.findElements(selenium_webdriver_1.By.css(":scope > *"));
+        console.log("pegou a lista");
         console.log(elements.length);
+        // return null
         let qtd = 1;
         for await (const item of elements) {
             // lista quantos ja foram em comparacao aos que faltam
             process.stdout.write(`${qtd}/${elements.length}`);
             qtd++;
+            // scrolla ate o elemento atual
             await this.#driver.executeScript("arguments[0].scrollIntoView()", item);
             await item.click();
-            const slw = await item.findElements(selenium_webdriver_1.By.css(":scope > div > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div"));
+            const mainElementsTag = await item.findElements(selenium_webdriver_1.By.css(":scope > div > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div"));
             // separar em outro metodo (verify on Data Base)
+            // para isso sera preciso instancias o "DatabaseControler" tambem
+            // (pendencia futura)
             const currentUrl = await this.#driver.getCurrentUrl();
-            const url = new URL(currentUrl);
-            const jobId = url.searchParams.get("currentJobId");
+            const url = new URLSearchParams(currentUrl.search);
+            const jobId = url.get("currentJobId");
             const { rows } = await this.#databaseConnection.query("SELECT jobid FROM vagas WHERE jobid = $1", [jobId]);
             // console.log(rows)
             // se o titulo ja existir passa pro proximo
@@ -155,23 +107,18 @@ class Controler {
                     console.log("\x1b[33m Ja existe essa vaga! \x1b[30m");
                 continue;
             }
-            let title = await slw[0].getText();
+            let title = await mainElementsTag[0].getText();
             title = title.split("\n")[0];
-            const empresa = await slw[1].getText();
-            const regiao = await slw[2].getText();
+            const empresa = await mainElementsTag[1].getText();
+            const regiao = await mainElementsTag[2].getText();
             let macthModalidade = regiao.match(/\((?<modalidade>[a-zA-ZÀ-ú]+)\)$/);
+            // se o REGEX der certo ele verifica se existe o grupo
             if (macthModalidade) {
                 macthModalidade = macthModalidade.groups.modalidade;
             }
             // modalidade = modalidade[0].slice(1, modalidade[0].length - 1)
             const dt_publicado = await this.getANDTranformPublishedDate();
-            // console.log(`\x1b[33m ${jobId} \x1b[30m`)
-            // console.log(title)
-            // console.log(modalidade)
-            // console.log(dt_publicado)
-            // console.log(empresa)
-            // console.log(regiao)
-            // console.log("\n")
+            // pega a descricao, e os requisitos com IA
             const [descricao, requisitos] = await this.getDescriptionsInfos();
             // criar um tipo para os dados recebidos, e verificar com o zod
             const data = {
@@ -191,8 +138,9 @@ class Controler {
             await this.saveVacancyOnDataBase(data);
             // break
         }
-        console.log("Terminol!");
+        console.log("Terminou!");
     }
+    // searar esse metodo no banco
     // salva no banco
     async saveVacancyOnDataBase(data) {
         const conn = await this.#databaseConnection.connect();

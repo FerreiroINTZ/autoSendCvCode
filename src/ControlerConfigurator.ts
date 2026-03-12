@@ -46,6 +46,7 @@ class ControlerConfigurator{
         const newObj = {...configs}
         newObj.url = new URL(this.sitesDefaultsConfigs(configs.site).host)
         newObj.url.pathname = this.sitesDefaultsConfigs(configs.site).pathname
+        // essa parte pode usar o searchParams
         newObj.url.search = this.sitesDefaultsConfigs(configs.site).search + configs.searchWords[0]
         return {...newObj}
     }
@@ -53,13 +54,15 @@ class ControlerConfigurator{
     // configura a URL para cada opcao
     static sitesDefaultsConfigs(word: string){
 
-        // tem que tipar esse objeto
+        // tem que tipar esse objeto com o "Record<>"
+        // aqui provavelmente vai precisar receber uma funcao que ja formata o search
         const opts: any = 
         {
             linkedin: {
                 host: `https://${word}.com`,
-                pathname: "jobs/",
-                search: "keywords="
+                pathname: "jobs/search",
+                search: "keywords=",
+                geoId: "103451405" // sumare, spp
             },
             indeed: {
                 host: `https://${word}.com`,

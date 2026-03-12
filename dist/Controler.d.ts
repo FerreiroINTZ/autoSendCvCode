@@ -1,5 +1,6 @@
 import { Configuracao } from "./types/types$schemas";
-declare class Controler {
+import Utils from "./ControlerUtils";
+declare class Controler extends Utils {
     #private;
     constructor(data: {
         dbConn: any;
@@ -7,11 +8,8 @@ declare class Controler {
         driver: any;
     });
     getWebSite(): Promise<void>;
-    doResearch(): Promise<void>;
     askAiForGetDescriptionDetais(descText: string): Promise<void>;
-    getDescriptionsInfos(): Promise<any[]>;
-    getANDTranformPublishedDate(): Promise<Date | null>;
-    getBasicInfos(): Promise<null>;
+    getBasicInfos(): Promise<void>;
     saveVacancyOnDataBase(data: any): Promise<void>;
     getProperties(): void;
 }

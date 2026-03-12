@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const genai_1 = require("@google/genai");
-const types_schemas_1 = require("./types$schemas");
+const types_schemas_1 = require("./types/types$schemas");
 class ControlerConfigurator {
     static basicVerificantionsOfUserConfigParam({ userConfigs, dbConn, driver }) {
         if (typeof userConfigs != "object") {
@@ -19,6 +19,7 @@ class ControlerConfigurator {
             console.log(statement.error);
             throw new Error("Configuracoes invalidas");
         }
+        // verifica se a API do Gemini ta funcionando
         try {
             const api_teste = new genai_1.GoogleGenAI({ apiKey: userConfigs.aiKey });
             this.testeAiAPI(api_teste);
@@ -33,17 +34,20 @@ class ControlerConfigurator {
         const newObj = { ...configs };
         newObj.url = new URL(this.sitesDefaultsConfigs(configs.site).host);
         newObj.url.pathname = this.sitesDefaultsConfigs(configs.site).pathname;
+        // essa parte pode usar o searchParams
         newObj.url.search = this.sitesDefaultsConfigs(configs.site).search + configs.searchWords[0];
         return { ...newObj };
     }
     // configura a URL para cada opcao
     static sitesDefaultsConfigs(word) {
-        // tem que tipar esse objeto
+        // tem que tipar esse objeto com o "Record<>"
+        // aqui provavelmente vai precisar receber uma funcao que ja formata o search
         const opts = {
             linkedin: {
                 host: `https://${word}.com`,
-                pathname: "jobs/",
-                search: "keywords="
+                pathname: "jobs/search",
+                search: "keywords=",
+                geoId: "103451405" // sumare, spp
             },
             indeed: {
                 host: `https://${word}.com`,
