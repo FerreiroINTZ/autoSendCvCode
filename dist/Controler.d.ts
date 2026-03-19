@@ -1,6 +1,6 @@
-import Utils from "./utils/utils";
+import Configurator from "./configurator/configurator";
 import { Configuracao } from "./types/types$schemas";
-declare class Controler extends Utils {
+declare class Controler extends Configurator {
     #private;
     constructor(data: {
         dbConn: any;
@@ -8,9 +8,6 @@ declare class Controler extends Utils {
         driver: any;
     });
     getWebSite(): Promise<void>;
-    askAiForGetDescriptionDetais(descText: string): Promise<void>;
-    startToGetVacancies(): Promise<void>;
-    saveVacancyOnDataBase(data: any): Promise<void>;
     getProperties(): void;
 }
 export = Controler;
