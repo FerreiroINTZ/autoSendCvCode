@@ -44,8 +44,10 @@ export type Elements = {
     publishDate: string;
 };
 export declare const DescriptionSchemaParsed: z.core.ZodStandardJSONSchemaPayload<z.ZodObject<{
-    salario: z.ZodNumber;
+    salario: z.ZodOptional<z.ZodNumber>;
     requisitos: z.ZodArray<z.ZodString>;
     area: z.ZodString;
+    paridade: z.ZodNumber;
+    justificativa: z.ZodString;
 }, z.core.$strip>>;
 //# sourceMappingURL=types$schemas.d.ts.map

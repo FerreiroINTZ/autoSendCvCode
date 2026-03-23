@@ -1,5 +1,6 @@
-import {z} from "zod"
+import {optional, z} from "zod"
 import {GoogleGenAI} from "@google/genai"
+import { _max } from "zod/v4/core"
 
 // isso cria um Enum
 // isso precisa virar um tipo como um Enum, e nao um array
@@ -69,9 +70,11 @@ export type Elements = {
 // ================ Descriptionn Schema
 
 const DescriptionsSchema = z.object({
-    salario: z.number().describe("o salario pago pela vaga"),
+    salario: z.number().optional().describe("o salario pago pela vaga"),
     requisitos: z.array(z.string()).describe("os requisitos que a vaga pede para nela"),
-    area: z.string().describe("qual area a vaga faz parte, com base nas habilidades")
+    area: z.string().describe("qual area a vaga faz parte, com base nas habilidades"),
+    paridade: z.number().min(1).max(5).describe("um numero de 1 ate 5 que representa o quanto a vaga condiz com as palavras chave citadas no prompt"),
+    justificativa: z.string().describe("justificativa do por que escolhido o valor da paridade")
 })
 
 export const DescriptionSchemaParsed = z.toJSONSchema(DescriptionsSchema)
