@@ -7,6 +7,7 @@ import {
     ListaDeSites,
     Elements
 } from "../types/types$schemas"
+import { config } from "dotenv"
 
 class ControlerConfigurator{
 
@@ -48,49 +49,50 @@ class ControlerConfigurator{
     // configura a URL basica
     static transformUrlOnConfigProperty(configs: Configuracao){
         const newObj = {...configs}
-        newObj.url = new URL(this.sitesDefaultsConfigs(configs.site).host)
-        newObj.url.pathname = this.sitesDefaultsConfigs(configs.site).pathname
-        // essa parte pode usar o searchParams
-        newObj.url.search = this.sitesDefaultsConfigs(configs.site, {city: configs.cidade, searchWords: configs.searchWords}).search + configs.searchWords[0]
+        // cria a url
+        const url = this.sitesDefaultsConfigs(configs.site, configs.searchWords)
+        newObj.url = new URL(url.href)
+        newObj.url = Object.assign(newObj.url, url)
+        console.log(newObj.url)
+        // newObj.url = new URL(this.sitesDefaultsConfigs(configs.site))
+        // configura os outros campos
+        // newObj.url = this.sitesDefaultsConfigs(configs.site)
         return {...newObj}
     }
 
     // configura a URL para cada opcao
-    static sitesDefaultsConfigs(word: string, city?: any){
+    static sitesDefaultsConfigs(host: string, query: string[]){
 
         function linkedinFormat(data: any){
             const formater = new URLSearchParams()
             console.log(data)
-            formater.set("keywords", data.searchWords[0])
-            formater.set("geoId", "103451405")
+            formater.set("keywords", data.join(" "))
+            formater.set("geoId", "103451405") // sumare, spp
             return formater.toString()
         }
 
         // tem que tipar esse objeto com o "Record<>"
         // aqui provavelmente vai precisar receber uma funcao que ja formata o search
-        console.log('\x1b[1;32m ' + city)
         const opts: any = 
         {
             linkedin: {
-                host: `https://${word}.com`,
+                href: `https://${host}.com`,
                 pathname: "jobs/search",
-                search: (() => linkedinFormat(city?.searchWords))(),
-                // "keywords="
-                // geoId: "103451405" // sumare, spp
+                search: (() => linkedinFormat(query))(),
             },
             indeed: {
-                host: `https://${word}.com`,
+                href: `https://${host}.com`,
                 pathname: "jobs",
                 search: "q="
             },
             infojobs: {
-                host: `https://${word}.com.br`,
+                href: `https://${host}.com.br`,
                 pathname: "empregos.aspx",
                 search: "palabra="
             }
         }
 
-        return opts[word]
+        return opts[host]
     }
 
     // pega todos os dados e transformar no Objeto valido de configuracao

@@ -107,10 +107,8 @@ class Controler extends Configurator{
         //     // para isso sera preciso instancias o "DatabaseControler" tambem
         //     // (pendencia futura)
             const currentUrl = await this.#driver.getCurrentUrl()
-            const url = new URLSearchParams(currentUrl.search)
+            const url = new URL(currentUrl).searchParams
             const jobId = url.get("currentJobId")
-            console.log(jobId)
-            break
             const existance: Boolean = await this.modules.db.verifyExistance(jobId)
             
             // se o titulo ja existir passa pro proximo

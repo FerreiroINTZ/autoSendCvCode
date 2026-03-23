@@ -20,7 +20,7 @@ declare class ControlerConfigurator {
         knowledge?: string[] | undefined;
         cidade?: string | undefined;
     };
-    static sitesDefaultsConfigs(word: string, city?: any): any;
+    static sitesDefaultsConfigs(host: string, query: string[]): any;
     static parseConfigs(userData: UserConfig): {
         site: "linkedin" | "indeed" | "infojobs";
         searchWords: string[];
