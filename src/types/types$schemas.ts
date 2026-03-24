@@ -65,6 +65,7 @@ export type Elements = {
     regiao: string,
     vacancyDescriptionTag: string,
     publishDate: string,
+    pagingTag: string
 }
 
 // ================ Descriptionn Schema

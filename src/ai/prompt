@@ -1,1 +1,1 @@
-analise a seguinte descricao, identifique as informacoes do schema e retorne um json prenchido. Use como base as seguintes palavras chave para prencher a chave de "paridade": ${keywords}. Descricao: ${descText}
+analise a seguinte descricao, identifique as informacoes do schema e retorne um json prenchido. Use como base as seguintes palavras chave para prencher a chave de "paridade": ${keywords}. Caso a descricao nao tenha nada em comum com as palavras apenas desconsidere a analise, deixando um aviso simples, e de zero (0) na "paridade". Descricao: ${descText}

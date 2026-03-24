@@ -89,9 +89,18 @@ class Controler extends Configurator{
                 resolve("resolvido")
             }, 3000)
         })
-        for(let page = 1; page <= this.#configs.paginas!; page++){
-            console.log("pagina: ", page)
-        }
+
+        // sistema de paginacao
+        // provavelmente vai variar dependendo do site
+        // for await (let page of Array(this.#configs.paginas).keys()){
+        //     console.log(`\x1b[1;32m${this.#elements.pagingTag}`)
+        //     const paging = await this.#driver.wait(until.elementLocated(By.xpath(this.#elements.pagingTag)), 6000)
+        //     const pagingElements = await paging.findElements(By.css(":scope > *"))
+        //     console.log("pagina: ", page)
+        //     console.log(await pagingElements[1].getTagName())
+        //     // await pagingElements[1].click()
+        // }
+
         for await (const item of elements){
             
         //     // lista quantos ja foram em comparacao aos que faltam
@@ -133,8 +142,6 @@ class Controler extends Configurator{
             const descricao = await this.modules.utils.getDescriptionsInfos()
 
             const aiResponse = await this.modules.ai.askAiForGetDescriptionDetais(descricao, this.#configs.keywords)
-            console.log(aiResponse?.justificativa)
-            console.log(aiResponse?.paridade)
             // criar um tipo para os dados recebidos, e verificar com o zod
             // verificacao 
 
@@ -155,7 +162,6 @@ class Controler extends Configurator{
                 justificativa: aiResponse?.justificativa,
                 salario: aiResponse?.salario,
                 requisitos: aiResponse?.requisitos,
-                
             }
             // salva no banco
             await this.modules.db.saveVacancyOnDataBase(data)

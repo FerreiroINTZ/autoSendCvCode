@@ -28,16 +28,25 @@ class AIControler {
         const promptFormated = readPrompt
             .replace(/\${keywords}/, keywordsFormated);
         // .replace(/\${descText}/, descText)
-        const resp = await this.#ai.models.generateContent({
-            model: "gemini-3-flash-preview",
-            // melhorar o prompt
-            contents: promptFormated,
-            config: {
-                responseMimeType: "application/json",
-                responseJsonSchema: types_schemas_1.DescriptionSchemaParsed
-            }
-        });
-        return JSON.parse(resp.text);
+        try {
+            const resp = await this.#ai.models.generateContent({
+                model: "gemini-3-flash-preview",
+                // melhorar o prompt
+                contents: promptFormated,
+                config: {
+                    responseMimeType: "application/json",
+                    responseJsonSchema: types_schemas_1.DescriptionSchemaParsed
+                }
+            });
+            return JSON.parse(resp.text);
+        }
+        catch (e) {
+            const msg = JSON.parse(e.message).error.message;
+            // console.log(msg.includes("You exceeded"))
+            // colocar um log aqui que avisa que a cota foi exedida
+            // fazer com que, ao execeder a cota, ele use outro modelo
+            return {};
+        }
     }
 }
 exports.default = AIControler;

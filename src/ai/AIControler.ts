@@ -26,16 +26,24 @@ export default class AIControler{
         const promptFormated = readPrompt
             .replace(/\${keywords}/, keywordsFormated)
             // .replace(/\${descText}/, descText)
-        
-        const resp = await this.#ai.models.generateContent({
-            model: "gemini-3-flash-preview",
-            // melhorar o prompt
-            contents: promptFormated,
-            config: {
-                responseMimeType: "application/json",
-                responseJsonSchema: DescriptionSchemaParsed
-            }
-        })
-        return JSON.parse(resp.text!)
+        try{
+
+            const resp = await this.#ai.models.generateContent({
+                model: "gemini-3-flash-preview",
+                // melhorar o prompt
+                contents: promptFormated,
+                config: {
+                    responseMimeType: "application/json",
+                    responseJsonSchema: DescriptionSchemaParsed
+                }
+            })
+            return JSON.parse(resp.text!)
+        }catch(e: any){
+            const msg = JSON.parse(e.message).error.message
+            // console.log(msg.includes("You exceeded"))
+            // colocar um log aqui que avisa que a cota foi exedida
+            // fazer com que, ao execeder a cota, ele use outro modelo
+            return {}
+        }
     }
 }
