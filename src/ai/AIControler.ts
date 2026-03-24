@@ -1,3 +1,4 @@
+import fs, { read } from "fs"
 import {GoogleGenAI} from "@google/genai"
 import {DescriptionSchemaParsed} from "../types/types$schemas"
 
@@ -20,10 +21,16 @@ export default class AIControler{
     }
 
     async askAiForGetDescriptionDetais(descText: string, keyWords: string[]){
+        const readPrompt: string  = fs.readFileSync("./src/ai/prompt").toString()
+        const keywordsFormated = keyWords.join("; ")
+        const promptFormated = readPrompt
+            .replace(/\${keywords}/, keywordsFormated)
+            // .replace(/\${descText}/, descText)
+        
         const resp = await this.#ai.models.generateContent({
             model: "gemini-3-flash-preview",
-            contents: `analise a seguinte descricao, identifique as informacoes do schema e retorne um json prenchido. Use como base as seguintes palavras chave para prencher a chave de "paridade": ${keyWords.join("; ")}. Descricao:
-            ${descText}`,
+            // melhorar o prompt
+            contents: promptFormated,
             config: {
                 responseMimeType: "application/json",
                 responseJsonSchema: DescriptionSchemaParsed

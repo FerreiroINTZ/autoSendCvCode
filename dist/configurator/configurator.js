@@ -27,25 +27,21 @@ class ControlerConfigurator {
             throw new Error("Configuracoes invalidas");
         }
     }
-    // da pra, ao invez de definir cada apropriedade, retornar um objeto com tudo ja configurado em apenas um
+    // ao invez de retornar as configuracoes, ele poderia retornar apenas o config da URL
     // configura a URL basica
     static transformUrlOnConfigProperty(configs) {
         const newObj = { ...configs };
-        // cria a url
+        // cria o objeto de configuracao da URL
         const url = this.sitesDefaultsConfigs(configs.site, configs.searchWords);
         newObj.url = new URL(url.href);
         newObj.url = Object.assign(newObj.url, url);
-        console.log(newObj.url);
-        // newObj.url = new URL(this.sitesDefaultsConfigs(configs.site))
-        // configura os outros campos
-        // newObj.url = this.sitesDefaultsConfigs(configs.site)
         return { ...newObj };
     }
     // configura a URL para cada opcao
     static sitesDefaultsConfigs(host, query) {
         function linkedinFormat(data) {
             const formater = new URLSearchParams();
-            console.log(data);
+            console.log(encodeURIComponent(data.join(" ")));
             formater.set("keywords", data.join(" "));
             formater.set("geoId", "103451405"); // sumare, spp
             return formater.toString();

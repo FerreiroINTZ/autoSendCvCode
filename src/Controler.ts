@@ -113,7 +113,7 @@ class Controler extends Configurator{
             
             // se o titulo ja existir passa pro proximo
             if(existance){
-                console.log("\x1b[33m Ja existe essa vaga! \x1b[30m")
+                console.log("\x1b[33m Ja existe essa vaga! \x1b[0m")
                 continue
             }
             
@@ -124,17 +124,17 @@ class Controler extends Configurator{
             const regiao = await mainElementsTag[2].getText()
             let macthModalidade = regiao.match(/\((?<modalidade>[a-zA-ZÀ-ú]+)\)$/)
 
-            // se o REGEX der certo ele verifica se existe o grupo
+            // se o REGEX der certo ele pega o valor do grupo
             if(macthModalidade){
                 macthModalidade = macthModalidade.groups.modalidade
             }
-            // modalidade = modalidade[0].slice(1, modalidade[0].length - 1)
             const dt_publicado = await this.modules.utils.getANDTranformPublishedDate()
             // pega a descricao, e os requisitos com IA
             const descricao = await this.modules.utils.getDescriptionsInfos()
 
-            // const aiResponse = await this.modules.ai.askAiForGetDescriptionDetais(descricao, this.#configs.keywords)
-
+            const aiResponse = await this.modules.ai.askAiForGetDescriptionDetais(descricao, this.#configs.keywords)
+            console.log(aiResponse?.justificativa)
+            console.log(aiResponse?.paridade)
             // criar um tipo para os dados recebidos, e verificar com o zod
             // verificacao 
 
@@ -150,20 +150,17 @@ class Controler extends Configurator{
                 macthModalidade,
                 dt_publicado,
 
-                // area: aiResponse.area,
-                // paridade: aiResponse?.paridade,
-                // justificativa: aiResponse?.justificativa,
-                // salario: aiResponse?.salario,
-                // requisitos: aiResponse?.requisitos,
+                area: aiResponse.area,
+                paridade: aiResponse?.paridade,
+                justificativa: aiResponse?.justificativa,
+                salario: aiResponse?.salario,
+                requisitos: aiResponse?.requisitos,
                 
             }
-            console.log(data)
-            //     // salva no banco
+            // salva no banco
             await this.modules.db.saveVacancyOnDataBase(data)
-            break
-            // break
     }
-    console.log("Terminou!")
+    console.log("\x1b[1;35mTerminou!")
     }
 
     getProperties(){

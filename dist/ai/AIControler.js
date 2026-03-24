@@ -1,5 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __importDefault(require("fs"));
 const genai_1 = require("@google/genai");
 const types_schemas_1 = require("../types/types$schemas");
 class AIControler {
@@ -19,10 +23,15 @@ class AIControler {
         }
     }
     async askAiForGetDescriptionDetais(descText, keyWords) {
+        const readPrompt = fs_1.default.readFileSync("./src/ai/prompt").toString();
+        const keywordsFormated = keyWords.join("; ");
+        const promptFormated = readPrompt
+            .replace(/\${keywords}/, keywordsFormated);
+        // .replace(/\${descText}/, descText)
         const resp = await this.#ai.models.generateContent({
             model: "gemini-3-flash-preview",
-            contents: `analise a seguinte descricao, identifique as informacoes do schema e retorne um json prenchido. Use como base as seguintes palavras chave para prencher a chave de "paridade": ${keyWords.join("; ")}. Descricao:
-            ${descText}`,
+            // melhorar o prompt
+            contents: promptFormated,
             config: {
                 responseMimeType: "application/json",
                 responseJsonSchema: types_schemas_1.DescriptionSchemaParsed
