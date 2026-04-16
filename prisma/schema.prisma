@@ -23,7 +23,7 @@ model ai_analysis {
 model descricoes {
   descricao  String?
   id         Int      @id @default(autoincrement())
-  requisitos String[] @db.VarChar(50)
+  requisitos String[] @db.VarChar(50) // analisado pela ai
   vagas      vagas[]
 }
 

@@ -50,5 +50,8 @@ export declare const DescriptionSchemaParsed: z.core.ZodStandardJSONSchemaPayloa
     area: z.ZodString;
     paridade: z.ZodNumber;
     justificativa: z.ZodString;
+    matches: z.ZodArray<z.ZodString>;
+    weaknesses: z.ZodArray<z.ZodString>;
+    summary: z.ZodString;
 }, z.core.$strip>>;
 //# sourceMappingURL=types$schemas.d.ts.map

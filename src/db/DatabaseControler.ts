@@ -1,5 +1,5 @@
 import { Pool } from "pg";
-import {PrismaClient} from "@PrismaClient"
+import {PrismaClient} from "../generated/prisma/client"
 import {PrismaPg} from "@prisma/adapter-pg"
 
 export default class DatabaseControler {

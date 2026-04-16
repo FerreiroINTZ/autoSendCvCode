@@ -37,6 +37,8 @@ export default class AIControler{
                     responseJsonSchema: DescriptionSchemaParsed
                 }
             })
+            console.log("analise dahora kksks")
+            console.log(JSON.parse(resp.text!))
             return JSON.parse(resp.text!)
         }catch(e: any){
             const msg = JSON.parse(e.message).error.message

@@ -39,10 +39,13 @@ exports.ConfigSchema = zod_1.z.object({
 // ================ Descriptionn Schema
 const DescriptionsSchema = zod_1.z.object({
     salario: zod_1.z.number().optional().describe("o salario pago pela vaga"),
-    requisitos: zod_1.z.array(zod_1.z.string()).describe("os requisitos que a vaga pede para nela"),
+    requisitos: zod_1.z.array(zod_1.z.string()).describe("os requisitos que a vaga pede"),
     area: zod_1.z.string().describe("qual area a vaga faz parte, com base nas habilidades"),
-    paridade: zod_1.z.number().min(1).max(5).describe("um numero de 1 ate 4 que representa o quanto a vaga condiz com as palavras chave citadas no prompt"),
-    justificativa: zod_1.z.string().describe("justificativa do por que escolhido o valor da paridade")
+    paridade: zod_1.z.number().min(1).max(4).describe("um numero de 1 ate 4 que representa o quanto a vaga condiz com as palavras chave citadas no prompt. Sendo: 1, pessimo; 2, ruim; 3, bom; 4, perfeita "),
+    justificativa: zod_1.z.string().describe("justificativa do por que escolhido o valor da paridade"),
+    matches: zod_1.z.array(zod_1.z.string()).describe("contem as palavras chave da vaga, em si"),
+    weaknesses: zod_1.z.array(zod_1.z.string()).describe("sao os pontos fracos da vaga com relacao as palavras chave que o usuario passou"),
+    summary: zod_1.z.string().describe("um resumo de poucas palavras sobre a paridade da vaga")
 });
 exports.DescriptionSchemaParsed = zod_1.z.toJSONSchema(DescriptionsSchema);
 //# sourceMappingURL=types$schemas.js.map

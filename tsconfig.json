@@ -2,7 +2,7 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
-    // "rootDir": "./src",
+    "rootDir": "./src",
     "outDir": "./dist",
 
     // Environment Settings
@@ -41,10 +41,10 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "paths": {
-      "@PrismaClient": ["./generated/prisma/client"]
+      "@PrismaClient": ["./src/generated/prisma/client"]
     }
   },
   // o tsc ta reclamando que achou outros .ts fora do rootDir
   // entao aqui eu excluo eles
-  "exclude": ["./generated", "./prisma.config.ts", "./dist"]
+  "exclude": ["./prisma.config.ts", "./dist", "./node_modules"]
 }

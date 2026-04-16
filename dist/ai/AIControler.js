@@ -38,6 +38,8 @@ class AIControler {
                     responseJsonSchema: types_schemas_1.DescriptionSchemaParsed
                 }
             });
+            console.log("analise dahora kksks");
+            console.log(JSON.parse(resp.text));
             return JSON.parse(resp.text);
         }
         catch (e) {
