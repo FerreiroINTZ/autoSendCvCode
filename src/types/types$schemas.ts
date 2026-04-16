@@ -74,7 +74,7 @@ const DescriptionsSchema = z.object({
     salario: z.number().optional().describe("o salario pago pela vaga"),
     requisitos: z.array(z.string()).describe("os requisitos que a vaga pede para nela"),
     area: z.string().describe("qual area a vaga faz parte, com base nas habilidades"),
-    paridade: z.number().min(1).max(5).describe("um numero de 1 ate 5 que representa o quanto a vaga condiz com as palavras chave citadas no prompt"),
+    paridade: z.number().min(1).max(5).describe("um numero de 1 ate 4 que representa o quanto a vaga condiz com as palavras chave citadas no prompt"),
     justificativa: z.string().describe("justificativa do por que escolhido o valor da paridade")
 })
 

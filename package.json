@@ -1,0 +1,30 @@
+{
+  "name": "automation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ferreirointz/autoSendCvCode.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ferreirointz/autoSendCvCode/issues"
+  },
+  "homepage": "https://github.com/ferreirointz/autoSendCvCode#readme",
+  "dependencies": {
+    "@google/genai": "^1.50.1",
+    "dotenv": "^17.4.2",
+    "pg": "^8.20.0",
+    "selenium-webdriver": "^4.43.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2",
+    "zod": "^4.3.6"
+  }
+}

@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { Configuracao, UserConfig } from "../types/types$schemas";
+import { Configuracao, UserConfig } from "../types/types$schemas.js";
 declare class ControlerConfigurator {
     protected modules: any;
     constructor(clases: any);

@@ -6,7 +6,7 @@ import {
     UserConfig,
     ListaDeSites,
     Elements
-} from "../types/types$schemas"
+} from "../types/types$schemas.js"
 import { config } from "dotenv"
 
 class ControlerConfigurator{

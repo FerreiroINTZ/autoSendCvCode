@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const types_schemas_1 = require("../types/types$schemas");
+const types_schemas_js_1 = require("../types/types$schemas.js");
 class ControlerConfigurator {
     modules;
     constructor(clases) {
@@ -21,7 +21,7 @@ class ControlerConfigurator {
             throw new Error("Driver invalido!");
         }
         // verifica os dados recebidos pelo usuario
-        const statement = types_schemas_1.UserConfigSchema.safeParse(userConfigs);
+        const statement = types_schemas_js_1.UserConfigSchema.safeParse(userConfigs);
         if (!statement.success) {
             console.log(statement.error);
             throw new Error("Configuracoes invalidas");

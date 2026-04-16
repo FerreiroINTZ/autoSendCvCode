@@ -7,10 +7,11 @@ async function main(){
 
     const options = new chrome.Options()
     options.addArguments("user-data-dir=driver",
-        // "--start-maximized"
+        "--window-size=1000,800"
     )
 
     options.excludeSwitches("enable-automation")
+    options.addArguments('--disable-blink-features=AutomationControlled')
 
     const driver = new Builder()
     .forBrowser("chrome")
