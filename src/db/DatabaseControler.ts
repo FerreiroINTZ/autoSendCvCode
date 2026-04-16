@@ -1,4 +1,6 @@
 import { Pool } from "pg";
+import {PrismaClient} from "@PrismaClient"
+import {PrismaPg} from "@prisma/adapter-pg"
 
 export default class DatabaseControler {
   #conn: Pool;
@@ -7,6 +9,8 @@ export default class DatabaseControler {
 
   // se conecta via String de conexao
   constructor(connString: any) {
+    const adapter = new PrismaPg({connectionString: connString})
+    const db = new PrismaClient({adapter})
     this.#conn = new Pool({
       connectionString: connString,
     });
