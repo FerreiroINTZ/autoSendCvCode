@@ -46,10 +46,10 @@ export type Elements = {
 };
 export declare const DescriptionSchemaParsed: z.core.ZodStandardJSONSchemaPayload<z.ZodObject<{
     salario: z.ZodOptional<z.ZodNumber>;
-    requisitos: z.ZodArray<z.ZodString>;
     area: z.ZodString;
     paridade: z.ZodNumber;
     justificativa: z.ZodString;
+    requisitos: z.ZodArray<z.ZodString>;
     matches: z.ZodArray<z.ZodString>;
     weaknesses: z.ZodArray<z.ZodString>;
     summary: z.ZodString;

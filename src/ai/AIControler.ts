@@ -4,6 +4,7 @@ import {DescriptionSchemaParsed} from "../types/types$schemas"
 
 export default class AIControler{
     #ai: GoogleGenAI
+    #ai_models = ["gemini-3-flash-preview", "|", "Gemini 2.5 Flash", "Gemini 3.1 Flash Lite"]
 
     constructor(aiKey: string){
         this.#ai = new GoogleGenAI({apiKey: aiKey})
@@ -37,12 +38,14 @@ export default class AIControler{
                     responseJsonSchema: DescriptionSchemaParsed
                 }
             })
-            console.log("analise dahora kksks")
-            console.log(JSON.parse(resp.text!))
-            return JSON.parse(resp.text!)
+            const json = JSON.parse(resp.text!)
+            // console.log(resp)
+            console.log(json)
+            return json
         }catch(e: any){
             const msg = JSON.parse(e.message).error.message
-            // console.log(msg.includes("You exceeded"))
+            console.log(msg)
+            console.log(msg.includes("You exceeded"))
             // colocar um log aqui que avisa que a cota foi exedida
             // fazer com que, ao execeder a cota, ele use outro modelo
             return {}

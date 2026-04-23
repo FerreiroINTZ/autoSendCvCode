@@ -41,6 +41,7 @@ class DatabaseControler {
     // para deixar de gerenciar diretamente as descricoes
     async saveVacancyOnDataBase(data) {
         try {
+            console.log(Object.keys(data));
             const query = await this.#conn.$transaction(async (tx) => {
                 await tx.vagas.create({
                     data: {
@@ -52,21 +53,27 @@ class DatabaseControler {
                         link: data.currentUrl,
                         modalidade: data.macthModalidade,
                         dt_publicacao: data.dt_publicado,
-                        // data?.justificativa,
                         area: data?.area,
-                        paridade: data?.paridade,
-                        salario: data?.salario,
-                        requisitos: data.requisitos,
+                        salario: String(data?.salario),
                         descricoes: {
                             create: {
                                 descricao: data.descricao,
-                                // requisitos:
+                            }
+                        },
+                        ai_analysis: {
+                            create: {
+                                paridade: data?.paridade,
+                                justificativa: data?.justificativa,
+                                matches: data?.matches,
+                                requisitos: data?.requisitos,
+                                summary: data?.summary,
+                                weaknesses: data?.weaknesses
                             }
                         }
                     }
                 });
             });
-            console.log("\x1b[32m Salvo no Banco! \x1b[0m ");
+            console.log("\x1b[32m Salvo no Banco! \x1b[0m ", `${data.paridade ? data.paridade : 0}/4`);
         }
         catch (e) {
             console.log(e);

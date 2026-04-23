@@ -144,7 +144,6 @@ class Controler extends Configurator{
             const aiResponse = await this.modules.ai.askAiForGetDescriptionDetais(descricao, this.#configs.keywords)
             // criar um tipo para os dados recebidos, e verificar com o zod
             // verificacao 
-            // const aiResponse: any = {}
 
             const data: any = {
                 title,
@@ -157,16 +156,17 @@ class Controler extends Configurator{
                 currentUrl,
                 macthModalidade,
                 dt_publicado,
-
-                area: aiResponse?.area,
-                paridade: aiResponse?.paridade,
-                justificativa: aiResponse?.justificativa,
                 salario: aiResponse?.salario,
-                requisitos: aiResponse?.requisitos,
-                
-                matches: aiResponse?.matches,
-                summary: aiResponse?.sumarry,
-                weaknesses: aiResponse?.weaknesses,
+                area: aiResponse?.area,
+
+                ...aiResponse,
+
+                // paridade: aiResponse?.paridade,
+                // justificativa: aiResponse?.justificativa,
+                // requisitos: aiResponse?.requisitos,
+                // matches: aiResponse?.matches,
+                // summary: aiResponse?.sumarry,
+                // weaknesses: aiResponse?.weaknesses,
             }
             // salva no banco
             await this.modules.db.saveVacancyOnDataBase(data)

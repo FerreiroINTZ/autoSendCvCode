@@ -8,6 +8,7 @@ const genai_1 = require("@google/genai");
 const types_schemas_1 = require("../types/types$schemas");
 class AIControler {
     #ai;
+    #ai_models = ["gemini-3-flash-preview", "|", "Gemini 2.5 Flash", "Gemini 3.1 Flash Lite"];
     constructor(aiKey) {
         this.#ai = new genai_1.GoogleGenAI({ apiKey: aiKey });
         // precisa ser um async para dar certo!
@@ -38,13 +39,15 @@ class AIControler {
                     responseJsonSchema: types_schemas_1.DescriptionSchemaParsed
                 }
             });
-            console.log("analise dahora kksks");
-            console.log(JSON.parse(resp.text));
-            return JSON.parse(resp.text);
+            const json = JSON.parse(resp.text);
+            // console.log(resp)
+            console.log(json);
+            return json;
         }
         catch (e) {
             const msg = JSON.parse(e.message).error.message;
-            // console.log(msg.includes("You exceeded"))
+            console.log(msg);
+            console.log(msg.includes("You exceeded"));
             // colocar um log aqui que avisa que a cota foi exedida
             // fazer com que, ao execeder a cota, ele use outro modelo
             return {};
