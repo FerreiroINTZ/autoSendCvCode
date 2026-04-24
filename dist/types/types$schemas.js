@@ -12,6 +12,8 @@ exports.Sites = [
 ];
 const EnumSites = zod_1.z.enum(exports.Sites);
 // ============= configs do usuario
+// precisa unificar os "UserConfigSchema" com o "ConfigSchema"
+// da pra fazer isso com UserConfigSchema.extends({...})
 exports.UserConfigSchema = zod_1.z.object({
     site: EnumSites,
     searchWords: zod_1.z.array(zod_1.z.string()).min(1, "Precisa de pelo menos 1 item"),
@@ -21,6 +23,7 @@ exports.UserConfigSchema = zod_1.z.object({
     keywords: zod_1.z.array(zod_1.z.string()).optional(),
     knowledge: zod_1.z.array(zod_1.z.string()).optional(),
     cidade: zod_1.z.string().optional(),
+    aiRequired: zod_1.z.boolean().optional()
 }).strict();
 // ============= configs do Controler
 exports.ConfigSchema = zod_1.z.object({
@@ -28,13 +31,14 @@ exports.ConfigSchema = zod_1.z.object({
     searchWords: zod_1.z.array(zod_1.z.string()).min(1, "Precisa de pelo menos 1 item"),
     aiKey: zod_1.z.string(),
     // sao obrigatorios
-    ai: zod_1.z.instanceof(genai_1.GoogleGenAI).optional(),
-    url: zod_1.z.instanceof(URL).optional(),
+    ai: zod_1.z.instanceof(genai_1.GoogleGenAI),
+    url: zod_1.z.instanceof(URL),
     paginas: zod_1.z.number().default(1).optional(),
     keywords: zod_1.z.array(zod_1.z.string()).optional(),
     area: zod_1.z.string().optional(),
     knowledge: zod_1.z.array(zod_1.z.string()).optional(),
     cidade: zod_1.z.string().optional(),
+    aiRequired: zod_1.z.boolean().optional()
 }).strict();
 // ================ Descriptionn Schema
 const DescriptionsSchema = zod_1.z.object({

@@ -16,6 +16,8 @@ const EnumSites = z.enum(Sites)
 
 // ============= configs do usuario
 
+// precisa unificar os "UserConfigSchema" com o "ConfigSchema"
+// da pra fazer isso com UserConfigSchema.extends({...})
 export const UserConfigSchema = z.object({
     site: EnumSites,
     searchWords: z.array(z.string()).min(1, "Precisa de pelo menos 1 item"),
@@ -26,6 +28,7 @@ export const UserConfigSchema = z.object({
     keywords: z.array(z.string()).optional(),
     knowledge: z.array(z.string()).optional(),
     cidade: z.string().optional(),
+    aiRequired: z.boolean().optional()
 }).strict()
 
 export type UserConfig = z.infer<typeof UserConfigSchema>
@@ -38,14 +41,15 @@ export const ConfigSchema = z.object({
     aiKey: z.string(),
     
     // sao obrigatorios
-    ai: z.instanceof(GoogleGenAI).optional(),
-    url: z.instanceof(URL).optional(),
+    ai: z.instanceof(GoogleGenAI),
+    url: z.instanceof(URL),
     
     paginas: z.number().default(1).optional(),
     keywords: z.array(z.string()).optional(),
     area: z.string().optional(),
     knowledge: z.array(z.string()).optional(),
     cidade: z.string().optional(),
+    aiRequired: z.boolean().optional()
 }).strict()
 
 export type Configuracao = z.infer<typeof ConfigSchema>

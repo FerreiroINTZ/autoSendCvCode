@@ -42,7 +42,6 @@ class ControlerConfigurator{
             console.log(statement.error)
             throw new Error("Configuracoes invalidas")
         }
-
     }
 
     // ao invez de retornar as configuracoes, ele poderia retornar apenas o config da URL

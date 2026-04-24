@@ -15,6 +15,7 @@ export declare const UserConfigSchema: z.ZodObject<{
     keywords: z.ZodOptional<z.ZodArray<z.ZodString>>;
     knowledge: z.ZodOptional<z.ZodArray<z.ZodString>>;
     cidade: z.ZodOptional<z.ZodString>;
+    aiRequired: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>;
 export type UserConfig = z.infer<typeof UserConfigSchema>;
 export declare const ConfigSchema: z.ZodObject<{
@@ -25,13 +26,14 @@ export declare const ConfigSchema: z.ZodObject<{
     }>;
     searchWords: z.ZodArray<z.ZodString>;
     aiKey: z.ZodString;
-    ai: z.ZodOptional<z.ZodCustom<GoogleGenAI, GoogleGenAI>>;
-    url: z.ZodOptional<z.ZodCustom<URL, URL>>;
+    ai: z.ZodCustom<GoogleGenAI, GoogleGenAI>;
+    url: z.ZodCustom<URL, URL>;
     paginas: z.ZodOptional<z.ZodDefault<z.ZodNumber>>;
     keywords: z.ZodOptional<z.ZodArray<z.ZodString>>;
     area: z.ZodOptional<z.ZodString>;
     knowledge: z.ZodOptional<z.ZodArray<z.ZodString>>;
     cidade: z.ZodOptional<z.ZodString>;
+    aiRequired: z.ZodOptional<z.ZodBoolean>;
 }, z.core.$strict>;
 export type Configuracao = z.infer<typeof ConfigSchema>;
 export type Elements = {

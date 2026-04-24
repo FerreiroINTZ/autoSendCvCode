@@ -60,7 +60,7 @@ class Controler extends Configurator{
         this.#configs.paginas = data.userConfigs.paginas || 1
         this.#driver = data.driver
         this.#elements = elements
-
+        console.log(this.#configs)
     }
 
     // acessa o site

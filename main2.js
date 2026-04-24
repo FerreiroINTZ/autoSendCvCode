@@ -20,7 +20,14 @@ async function main(){
     console.log("iniciado")
 
     const dbConn = "posgresql://nk_gb7:nk@localhost:5432/cvautomation"
-    const userConfigs = {site: "linkedin", searchWords: ["front-end", "back-end"], aiKey: process.env.AIAPIKEY, cidade: "sumare, sao paulo", keywords: ["front-end", "back-end", "full-stack", "node", "JavaScript", "React", "Nextjs", "Postgres", "TypeScript", "Nest"]}
+    const userConfigs = {
+        site: "linkedin", 
+        searchWords: ["front-end", "back-end"], 
+        aiKey: process.env.AIAPIKEY, 
+        cidade: "sumare, sao paulo", 
+        keywords: ["front-end", "back-end", "full-stack", "node", "JavaScript", "React", "Nextjs", "Postgres", "TypeScript", "Nest"],
+        aiRequired: true
+    }
 
     const controler = new Contoler({dbConn, userConfigs, driver})
     

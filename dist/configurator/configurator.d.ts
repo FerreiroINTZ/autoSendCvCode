@@ -12,26 +12,28 @@ declare class ControlerConfigurator {
         site: "linkedin" | "indeed" | "infojobs";
         searchWords: string[];
         aiKey: string;
-        ai?: GoogleGenAI | undefined;
-        url?: URL | undefined;
+        ai: GoogleGenAI;
+        url: URL;
         paginas?: number | undefined;
         keywords?: string[] | undefined;
         area?: string | undefined;
         knowledge?: string[] | undefined;
         cidade?: string | undefined;
+        aiRequired?: boolean | undefined;
     };
     static sitesDefaultsConfigs(host: string, query: string[]): any;
     static parseConfigs(userData: UserConfig): {
         site: "linkedin" | "indeed" | "infojobs";
         searchWords: string[];
         aiKey: string;
-        ai?: GoogleGenAI | undefined;
-        url?: URL | undefined;
+        ai: GoogleGenAI;
+        url: URL;
         paginas?: number | undefined;
         keywords?: string[] | undefined;
         area?: string | undefined;
         knowledge?: string[] | undefined;
         cidade?: string | undefined;
+        aiRequired?: boolean | undefined;
     };
     static setElementsTag(site: string): any;
 }
