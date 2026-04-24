@@ -54,4 +54,11 @@ export declare const DescriptionSchemaParsed: z.core.ZodStandardJSONSchemaPayloa
     weaknesses: z.ZodArray<z.ZodString>;
     summary: z.ZodString;
 }, z.core.$strip>>;
+export declare const modelsAvailable: readonly ["gemini-3-flash-preview", "gemini-2.5-flash"];
+declare const aiModelsSchema: z.ZodEnum<{
+    "gemini-3-flash-preview": "gemini-3-flash-preview";
+    "gemini-2.5-flash": "gemini-2.5-flash";
+}>;
+export type AiModels = z.infer<typeof aiModelsSchema>;
+export {};
 //# sourceMappingURL=types$schemas.d.ts.map

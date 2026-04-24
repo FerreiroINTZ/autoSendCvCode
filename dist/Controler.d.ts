@@ -8,7 +8,7 @@ declare class Controler extends Configurator {
         driver: any;
     });
     getWebSite(): Promise<void>;
-    startToGetVacancies(): Promise<void>;
+    startToGetVacancies(): Promise<null | undefined>;
     getProperties(): void;
 }
 export = Controler;

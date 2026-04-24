@@ -83,3 +83,16 @@ const DescriptionsSchema = z.object({
 })
 
 export const DescriptionSchemaParsed = z.toJSONSchema(DescriptionsSchema)
+
+// ====================================== ai types 
+
+export const modelsAvailable = [
+    "gemini-3-flash-preview",
+    "gemini-2.5-flash"
+    // "Gemini 2.5 Flash", 
+    // "Gemini 3.1 Flash Lite"
+] as const
+
+const aiModelsSchema = z.enum(modelsAvailable)
+
+export type AiModels = z.infer<typeof aiModelsSchema>

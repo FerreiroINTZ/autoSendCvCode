@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DescriptionSchemaParsed = exports.ConfigSchema = exports.UserConfigSchema = exports.Sites = void 0;
+exports.modelsAvailable = exports.DescriptionSchemaParsed = exports.ConfigSchema = exports.UserConfigSchema = exports.Sites = void 0;
 const zod_1 = require("zod");
 const genai_1 = require("@google/genai");
 // isso cria um Enum
@@ -48,4 +48,12 @@ const DescriptionsSchema = zod_1.z.object({
     summary: zod_1.z.string().describe("um resumo de poucas palavras sobre a paridade da vaga")
 });
 exports.DescriptionSchemaParsed = zod_1.z.toJSONSchema(DescriptionsSchema);
+// ====================================== ai types 
+exports.modelsAvailable = [
+    "gemini-3-flash-preview",
+    "gemini-2.5-flash"
+    // "Gemini 2.5 Flash", 
+    // "Gemini 3.1 Flash Lite"
+];
+const aiModelsSchema = zod_1.z.enum(exports.modelsAvailable);
 //# sourceMappingURL=types$schemas.js.map

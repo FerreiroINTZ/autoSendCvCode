@@ -141,9 +141,16 @@ class Controler extends Configurator{
             // pega a descricao, e os requisitos com IA
             const descricao = await this.modules.utils.getDescriptionsInfos()
 
+            console.log('nada')
             const aiResponse = await this.modules.ai.askAiForGetDescriptionDetais(descricao, this.#configs.keywords)
             // criar um tipo para os dados recebidos, e verificar com o zod
             // verificacao 
+            
+            // o return acaba com o loop e com a funcao
+            if(!aiResponse){
+                console.log("\x1b[31m IA Indisponivel!")
+                return null
+            }
 
             const data: any = {
                 title,
