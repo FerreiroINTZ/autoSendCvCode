@@ -60,7 +60,6 @@ class Controler extends Configurator{
         this.#configs.paginas = data.userConfigs.paginas || 1
         this.#driver = data.driver
         this.#elements = elements
-        console.log(this.#configs)
     }
 
     // acessa o site
@@ -141,15 +140,18 @@ class Controler extends Configurator{
             // pega a descricao, e os requisitos com IA
             const descricao = await this.modules.utils.getDescriptionsInfos()
 
-            console.log('nada')
             const aiResponse = await this.modules.ai.askAiForGetDescriptionDetais(descricao, this.#configs.keywords)
             // criar um tipo para os dados recebidos, e verificar com o zod
             // verificacao 
             
             // o return acaba com o loop e com a funcao
-            if(!aiResponse){
+            if(!aiResponse && this.#configs.aiRequired){
                 console.log("\x1b[31m IA Indisponivel!")
                 return null
+            }
+
+            if(aiResponse){
+                console.log("IA Fora de alcance!")
             }
 
             const data: any = {

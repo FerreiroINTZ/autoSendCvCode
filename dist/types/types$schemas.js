@@ -31,8 +31,8 @@ exports.ConfigSchema = zod_1.z.object({
     searchWords: zod_1.z.array(zod_1.z.string()).min(1, "Precisa de pelo menos 1 item"),
     aiKey: zod_1.z.string(),
     // sao obrigatorios
-    ai: zod_1.z.instanceof(genai_1.GoogleGenAI),
-    url: zod_1.z.instanceof(URL),
+    ai: zod_1.z.instanceof(genai_1.GoogleGenAI).optional(),
+    url: zod_1.z.instanceof(URL).optional(),
     paginas: zod_1.z.number().default(1).optional(),
     keywords: zod_1.z.array(zod_1.z.string()).optional(),
     area: zod_1.z.string().optional(),

@@ -26,7 +26,7 @@ async function main(){
         aiKey: process.env.AIAPIKEY, 
         cidade: "sumare, sao paulo", 
         keywords: ["front-end", "back-end", "full-stack", "node", "JavaScript", "React", "Nextjs", "Postgres", "TypeScript", "Nest"],
-        aiRequired: true
+        aiRequired: false
     }
 
     const controler = new Contoler({dbConn, userConfigs, driver})

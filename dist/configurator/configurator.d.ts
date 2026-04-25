@@ -12,8 +12,8 @@ declare class ControlerConfigurator {
         site: "linkedin" | "indeed" | "infojobs";
         searchWords: string[];
         aiKey: string;
-        ai: GoogleGenAI;
-        url: URL;
+        ai?: GoogleGenAI | undefined;
+        url?: URL | undefined;
         paginas?: number | undefined;
         keywords?: string[] | undefined;
         area?: string | undefined;
@@ -26,8 +26,8 @@ declare class ControlerConfigurator {
         site: "linkedin" | "indeed" | "infojobs";
         searchWords: string[];
         aiKey: string;
-        ai: GoogleGenAI;
-        url: URL;
+        ai?: GoogleGenAI | undefined;
+        url?: URL | undefined;
         paginas?: number | undefined;
         keywords?: string[] | undefined;
         area?: string | undefined;

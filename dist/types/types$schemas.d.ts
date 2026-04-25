@@ -26,8 +26,8 @@ export declare const ConfigSchema: z.ZodObject<{
     }>;
     searchWords: z.ZodArray<z.ZodString>;
     aiKey: z.ZodString;
-    ai: z.ZodCustom<GoogleGenAI, GoogleGenAI>;
-    url: z.ZodCustom<URL, URL>;
+    ai: z.ZodOptional<z.ZodCustom<GoogleGenAI, GoogleGenAI>>;
+    url: z.ZodOptional<z.ZodCustom<URL, URL>>;
     paginas: z.ZodOptional<z.ZodDefault<z.ZodNumber>>;
     keywords: z.ZodOptional<z.ZodArray<z.ZodString>>;
     area: z.ZodOptional<z.ZodString>;

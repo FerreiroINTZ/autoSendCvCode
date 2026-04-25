@@ -41,8 +41,8 @@ export const ConfigSchema = z.object({
     aiKey: z.string(),
     
     // sao obrigatorios
-    ai: z.instanceof(GoogleGenAI),
-    url: z.instanceof(URL),
+    ai: z.instanceof(GoogleGenAI).optional(),
+    url: z.instanceof(URL).optional(),
     
     paginas: z.number().default(1).optional(),
     keywords: z.array(z.string()).optional(),
