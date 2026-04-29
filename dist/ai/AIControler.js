@@ -19,7 +19,7 @@ class AIControler {
         // precisa ser um async para dar certo!
         // this.testeAiAPI()   // nao ta funcionando
     }
-    changeAiModel(descText, keyWords) {
+    changeAiModel(descText, keyWords, otherInfos) {
         // invalida o modelo atual
         this.#ai_models[this.#current_ai_model.indx].isUsable = false;
         // verifica se o modelo atul e o ultimo
@@ -51,7 +51,7 @@ class AIControler {
         // console.log(this.#current_ai_model.nome)
         console.log("Modelo novo: ");
         // tenta de novo
-        this.askAiForGetDescriptionDetais(descText, keyWords);
+        this.askAiForGetDescriptionDetais(descText, keyWords, otherInfos);
     }
     // teste se a chave da API e valida
     async testeAiAPI() {
@@ -62,7 +62,7 @@ class AIControler {
             throw new Error("Chave de API invalida!");
         }
     }
-    async askAiForGetDescriptionDetais(descText, keyWords) {
+    async askAiForGetDescriptionDetais(descText, keyWords, otherInfos) {
         // se nao for usavel ele retornar false
         if (!this.#isUsable) {
             process.stdout.write("\n \x1b[32m IA indisponiel! \x1b[0m");
@@ -73,7 +73,7 @@ class AIControler {
         const keywordsFormated = keyWords.join("; ");
         const promptFormated = readPrompt
             .replace(/\${keywords}/, keywordsFormated)
-            .replace(/\${descText}/, descText);
+            .replace(/\${descText}/, descText) + otherInfos;
         try {
             // throw new Error(JSON.stringify({
             //     error: {
@@ -99,7 +99,7 @@ class AIControler {
             // console.log(msg)
             if (msg.includes("You exceeded")) {
                 console.log("tokens maximos atingidos para: ", this.#current_ai_model.nome);
-                this.changeAiModel(descText, keyWords);
+                this.changeAiModel(descText, keyWords, otherInfos);
                 if (!this.#isUsable) {
                     return false;
                 }

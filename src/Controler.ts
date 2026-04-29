@@ -140,7 +140,11 @@ class Controler extends Configurator{
             // pega a descricao, e os requisitos com IA
             const descricao = await this.modules.utils.getDescriptionsInfos()
 
-            const aiResponse = await this.modules.ai.askAiForGetDescriptionDetais(descricao, this.#configs.keywords)
+            const aiResponse = 
+            await this.modules.ai.askAiForGetDescriptionDetais(
+                descricao, 
+                this.#configs.keywords, 
+                this.#configs.otherAiCriterions)
             // criar um tipo para os dados recebidos, e verificar com o zod
             // verificacao 
             

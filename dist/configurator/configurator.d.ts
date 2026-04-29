@@ -20,6 +20,7 @@ declare class ControlerConfigurator {
         knowledge?: string[] | undefined;
         cidade?: string | undefined;
         aiRequired?: boolean | undefined;
+        otherAiCriterions?: string | undefined;
     };
     static sitesDefaultsConfigs(host: string, query: string[]): any;
     static parseConfigs(userData: UserConfig): {
@@ -34,6 +35,7 @@ declare class ControlerConfigurator {
         knowledge?: string[] | undefined;
         cidade?: string | undefined;
         aiRequired?: boolean | undefined;
+        otherAiCriterions?: string | undefined;
     };
     static setElementsTag(site: string): any;
 }

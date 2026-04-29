@@ -26,7 +26,8 @@ async function main(){
         aiKey: process.env.AIAPIKEY, 
         cidade: "sumare, sao paulo", 
         keywords: ["front-end", "back-end", "full-stack", "node", "JavaScript", "React", "Nextjs", "Postgres", "TypeScript", "Nest"],
-        aiRequired: false
+        aiRequired: false,
+        otherAiCriterions: "A vaga pecisa ser no horario depois das 13:00, pois de manah tenho faculdade."
     }
 
     const controler = new Contoler({dbConn, userConfigs, driver})

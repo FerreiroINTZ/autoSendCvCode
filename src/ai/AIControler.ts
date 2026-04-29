@@ -22,7 +22,11 @@ export default class AIControler{
         // this.testeAiAPI()   // nao ta funcionando
     }
 
-    changeAiModel(descText: string, keyWords: string[]): void{
+    changeAiModel(
+        descText: string, 
+        keyWords: string[], 
+        otherInfos: string
+    ): void{
 
         // invalida o modelo atual
         this.#ai_models[this.#current_ai_model.indx]!.isUsable = false
@@ -64,7 +68,7 @@ export default class AIControler{
         console.log("Modelo novo: ")
 
         // tenta de novo
-        this.askAiForGetDescriptionDetais(descText, keyWords)
+        this.askAiForGetDescriptionDetais(descText, keyWords, otherInfos)
     }
 
     // teste se a chave da API e valida
@@ -76,7 +80,10 @@ export default class AIControler{
         }
     }
 
-    async askAiForGetDescriptionDetais(descText: string, keyWords: string[]){
+    async askAiForGetDescriptionDetais(
+        descText: string, 
+        keyWords: string[],
+        otherInfos: string){
         
         // se nao for usavel ele retornar false
         if(!this.#isUsable){
@@ -89,7 +96,7 @@ export default class AIControler{
         const keywordsFormated = keyWords.join("; ")
         const promptFormated = readPrompt
             .replace(/\${keywords}/, keywordsFormated)
-            .replace(/\${descText}/, descText)
+            .replace(/\${descText}/, descText) + otherInfos
         
         try{
             
@@ -117,7 +124,7 @@ export default class AIControler{
             // console.log(msg)
             if(msg.includes("You exceeded")){
                 console.log("tokens maximos atingidos para: ", this.#current_ai_model.nome)
-                this.changeAiModel(descText, keyWords)
+                this.changeAiModel(descText, keyWords, otherInfos)
                 if(!this.#isUsable){
                     return false
                 }

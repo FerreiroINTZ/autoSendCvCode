@@ -12,6 +12,7 @@ exports.Sites = [
 ];
 const EnumSites = zod_1.z.enum(exports.Sites);
 // ============= configs do usuario
+// o schema que o usuario vai prencher
 // precisa unificar os "UserConfigSchema" com o "ConfigSchema"
 // da pra fazer isso com UserConfigSchema.extends({...})
 exports.UserConfigSchema = zod_1.z.object({
@@ -23,14 +24,17 @@ exports.UserConfigSchema = zod_1.z.object({
     keywords: zod_1.z.array(zod_1.z.string()).optional(),
     knowledge: zod_1.z.array(zod_1.z.string()).optional(),
     cidade: zod_1.z.string().optional(),
-    aiRequired: zod_1.z.boolean().optional()
+    aiRequired: zod_1.z.boolean().optional(),
+    otherAiCriterions: zod_1.z.string().optional()
+    // sao informacoes adicionais personalizadas que seram passadas para a IA usar como cireteio
 }).strict();
 // ============= configs do Controler
+// o shcema que a Classe do "Controller" ira usar
 exports.ConfigSchema = zod_1.z.object({
     site: EnumSites,
     searchWords: zod_1.z.array(zod_1.z.string()).min(1, "Precisa de pelo menos 1 item"),
     aiKey: zod_1.z.string(),
-    // sao obrigatorios
+    // tem que ser opicional pra nao conflitar com o UserSchema na verificacao de URL do ControllerConfigurator
     ai: zod_1.z.instanceof(genai_1.GoogleGenAI).optional(),
     url: zod_1.z.instanceof(URL).optional(),
     paginas: zod_1.z.number().default(1).optional(),
@@ -38,9 +42,12 @@ exports.ConfigSchema = zod_1.z.object({
     area: zod_1.z.string().optional(),
     knowledge: zod_1.z.array(zod_1.z.string()).optional(),
     cidade: zod_1.z.string().optional(),
-    aiRequired: zod_1.z.boolean().optional()
+    // se a analise da IA deve se robrigatoria
+    aiRequired: zod_1.z.boolean().optional(),
+    otherAiCriterions: zod_1.z.string().optional()
 }).strict();
-// ================ Descriptionn Schema
+// ================ Description Schema
+// schema que a IA usara como base para prencher
 const DescriptionsSchema = zod_1.z.object({
     salario: zod_1.z.number().optional().describe("o salario pago pela vaga"),
     area: zod_1.z.string().describe("qual area a vaga faz parte, com base nas habilidades"),
@@ -52,7 +59,7 @@ const DescriptionsSchema = zod_1.z.object({
     summary: zod_1.z.string().describe("um resumo de poucas palavras sobre a paridade da vaga")
 });
 exports.DescriptionSchemaParsed = zod_1.z.toJSONSchema(DescriptionsSchema);
-// ====================================== ai types 
+// ============================ ai types 
 exports.modelsAvailable = [
     "gemini-3-flash-preview",
     "gemini-2.5-flash"

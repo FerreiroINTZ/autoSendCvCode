@@ -15,6 +15,7 @@ export type ListaDeSites = typeof Sites[number]
 const EnumSites = z.enum(Sites)
 
 // ============= configs do usuario
+// o schema que o usuario vai prencher
 
 // precisa unificar os "UserConfigSchema" com o "ConfigSchema"
 // da pra fazer isso com UserConfigSchema.extends({...})
@@ -28,19 +29,23 @@ export const UserConfigSchema = z.object({
     keywords: z.array(z.string()).optional(),
     knowledge: z.array(z.string()).optional(),
     cidade: z.string().optional(),
-    aiRequired: z.boolean().optional()
+    aiRequired: z.boolean().optional(),
+
+    otherAiCriterions: z.string().optional()
+    // sao informacoes adicionais personalizadas que seram passadas para a IA usar como cireteio
 }).strict()
 
 export type UserConfig = z.infer<typeof UserConfigSchema>
 
 // ============= configs do Controler
+// o shcema que a Classe do "Controller" ira usar
 
 export const ConfigSchema = z.object({
     site: EnumSites,
     searchWords: z.array(z.string()).min(1, "Precisa de pelo menos 1 item"),
     aiKey: z.string(),
     
-    // sao obrigatorios
+    // tem que ser opicional pra nao conflitar com o UserSchema na verificacao de URL do ControllerConfigurator
     ai: z.instanceof(GoogleGenAI).optional(),
     url: z.instanceof(URL).optional(),
     
@@ -49,7 +54,10 @@ export const ConfigSchema = z.object({
     area: z.string().optional(),
     knowledge: z.array(z.string()).optional(),
     cidade: z.string().optional(),
-    aiRequired: z.boolean().optional()
+    
+    // se a analise da IA deve se robrigatoria
+    aiRequired: z.boolean().optional(),
+    otherAiCriterions: z.string().optional()
 }).strict()
 
 export type Configuracao = z.infer<typeof ConfigSchema>
@@ -72,8 +80,8 @@ export type Elements = {
     pagingTag: string
 }
 
-// ================ Descriptionn Schema
-
+// ================ Description Schema
+// schema que a IA usara como base para prencher
 const DescriptionsSchema = z.object({
     salario: z.number().optional().describe("o salario pago pela vaga"),
     area: z.string().describe("qual area a vaga faz parte, com base nas habilidades"),
@@ -88,7 +96,7 @@ const DescriptionsSchema = z.object({
 
 export const DescriptionSchemaParsed = z.toJSONSchema(DescriptionsSchema)
 
-// ====================================== ai types 
+// ============================ ai types 
 
 export const modelsAvailable = [
     "gemini-3-flash-preview",

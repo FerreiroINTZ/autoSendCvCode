@@ -106,7 +106,7 @@ class Controler extends configurator_1.default {
             const dt_publicado = await this.modules.utils.getANDTranformPublishedDate();
             // pega a descricao, e os requisitos com IA
             const descricao = await this.modules.utils.getDescriptionsInfos();
-            const aiResponse = await this.modules.ai.askAiForGetDescriptionDetais(descricao, this.#configs.keywords);
+            const aiResponse = await this.modules.ai.askAiForGetDescriptionDetais(descricao, this.#configs.keywords, this.#configs.otherAiCriterions);
             // criar um tipo para os dados recebidos, e verificar com o zod
             // verificacao 
             // o return acaba com o loop e com a funcao

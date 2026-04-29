@@ -16,6 +16,7 @@ export declare const UserConfigSchema: z.ZodObject<{
     knowledge: z.ZodOptional<z.ZodArray<z.ZodString>>;
     cidade: z.ZodOptional<z.ZodString>;
     aiRequired: z.ZodOptional<z.ZodBoolean>;
+    otherAiCriterions: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 export type UserConfig = z.infer<typeof UserConfigSchema>;
 export declare const ConfigSchema: z.ZodObject<{
@@ -34,6 +35,7 @@ export declare const ConfigSchema: z.ZodObject<{
     knowledge: z.ZodOptional<z.ZodArray<z.ZodString>>;
     cidade: z.ZodOptional<z.ZodString>;
     aiRequired: z.ZodOptional<z.ZodBoolean>;
+    otherAiCriterions: z.ZodOptional<z.ZodString>;
 }, z.core.$strict>;
 export type Configuracao = z.infer<typeof ConfigSchema>;
 export type Elements = {
