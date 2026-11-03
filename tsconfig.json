@@ -41,7 +41,8 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "paths": {
-      "@PrismaClient": ["./src/generated/prisma/client"]
+      "@PrismaClient": ["./src/generated/prisma/client"],
+      "@Tipos/*": ["./src/types/*"]
     }
   },
   // o tsc ta reclamando que achou outros .ts fora do rootDir

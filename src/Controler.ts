@@ -9,11 +9,9 @@ import AIControler from "./ai/AIControler";
 import Utils from "./utils/utils";
 
 import {
-  ConfigSchema,
   Configuracao,
   Elements,
-  DescriptionSchemaParsed,
-} from "./types/types$schemas";
+} from "@Tipos/mainType.js"
 
 import { By, until, Key } from "selenium-webdriver";
 
@@ -60,6 +58,29 @@ class Controler extends Configurator {
     this.#elements = elements;
   }
 
+  async create(data: { dbConn: any; userConfigs: Configuracao; driver: any }){
+    Configurator.basicVerificantionsOfUserConfigParam(data);
+
+    // seta as propriedades da classe Utils
+    const elements = Configurator.setElementsTag(data.userConfigs.site);
+    
+    // chamar o metodo de criacao do Configurator
+    // super({
+    //   db: {
+    //     class: DataBaseContoler,
+    //     data: data.dbConn,
+    //   },
+    //   ai: {
+    //     class: AIControler,
+    //     data: data.userConfigs.aiKey,
+    //   },
+    //   utils: {
+    //     class: Utils,
+    //     data: { elements, driver: data.driver },
+    //   },
+    // });
+  }
+
   // acessa o site
   async getWebSite() {
     await this.#driver.manage().window().setRect({ width: 1000, height: 700 });
@@ -88,6 +109,7 @@ class Controler extends Configurator {
   }
 
   // verifica as vagas existetes para ver se tao disponiveis
+  // usado no "npm run review"
   async verifyVacancies(order: string = "desc") {
     const vacanciesIds = await this.modules.db.getVacanciesToVerify(
       this.#configs.paginas,
@@ -99,10 +121,13 @@ class Controler extends Configurator {
     }
 
     let vagasIndisponiveis: string[] = [];
+    let estimatedTime = null
     // return
     for await (const vaga of [...Array(vacanciesIds.length).keys()]) {
       const vacancy = vacanciesIds[vaga];
-      process.stdout.write(`${vaga + 1}/${vacanciesIds.length}: ${vacancy.jobid} `);
+      const startTime = performance.now()
+      console.log()
+      process.stdout.write(`\x1b[33m${vaga + 1}\x1b[2;30m/\x1b[0m${vacanciesIds.length}: \x1b[2;30m${vacancy.jobid} \x1b[0m`);
       // console.log(vacancy)
 
       await this.#driver.get(vacanciesIds[vaga].link);
@@ -118,12 +143,48 @@ class Controler extends Configurator {
           throw new Error("Vaga encontrada encontrada")
         }
         vagasIndisponiveis.push(vacancy.jobid);
-        console.log("\x1b[31mVaga indisponivel! \x1b[0m");
+        process.stdout.write("\x1b[31mVaga indisponivel!\x1b[0m");
       } catch (e: any) {
         // console.log(e)
         // console.log(Object.keys(e))
         // console.log(e.name)
-        console.log("\x1b[32m Vaga Disponivel! \x1b[0m");
+        process.stdout.write("\x1b[32m Vaga Disponivel! \x1b[0m");
+      }
+
+      const roundPercent = (vall: number) =>{
+        const numStr = String(vall * 100)
+        if(!numStr.includes(".")){
+          return vall * 100
+        }
+
+        const numSplit = numStr.split(".")
+        const formated = `${numSplit[0]}.${numSplit[1]!.slice(0, 2)}`
+        // console.log(numSplit[1]!.slice(0, 2))
+        return Number(formated)
+      }
+      const convertTime = (timeInMs: number) => {
+        const totalSeconds = Math.floor(timeInMs / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      };
+      const estimative = ((performance.now() - startTime) * (700 - vaga))
+      if(estimatedTime){
+        estimatedTime = (estimatedTime + estimative) / 2
+      }else{
+        estimatedTime = estimative
+      }
+      process.stdout.write(` | ${roundPercent((vaga+1)/vacanciesIds.length)}%`)
+      process.stdout.write(` | \x1b[2mTempo estimado: \x1b[0;34m${convertTime(estimatedTime)} \x1b[0m`)
+      if((vaga+1)%10 == 0 && vaga != 0){
+        fetch("https://ntfy.sh/automation_notification_nkgb", 
+          {
+            method: "POST",
+            body: `revisado ${vaga+1}/${vacanciesIds.length} vagas | ${roundPercent((vaga+1)/vacanciesIds.length)}% | Tempo Estimado: ${convertTime(estimatedTime)}`
+          }
+        )
       }
     }
     console.log(vagasIndisponiveis);
@@ -132,6 +193,12 @@ class Controler extends Configurator {
     console.log(`\x1b[31mVagas Indisponiveis:\x1b[0m ${vagasIndisponiveis.length}`)
     console.log(`\x1b[32mVagas Disponiveis:\x1b[0m ${vacanciesIds.length - vagasIndisponiveis.length}`)
     await this.modules.db.changeDisponibilidade({toSave: vagasIndisponiveis, all: vacanciesIds.map((x: any) => x.jobid)});
+    await fetch("https://ntfy.sh/automation_notification", 
+      {
+        method: "POST",
+        headers: {"X-Sequence-ID": `review`},  
+        body: `Terminado de Revisar todas as ${vacanciesIds.length} vagas!`}
+    )
     this.playAudios("end")
   }
 
@@ -141,12 +208,12 @@ class Controler extends Configurator {
     //   return;
     // }
     if(mode == "end"){
-      execSync("play /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga vol 1 reverb speed .4 vol 1")
+      execSync("play -q /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga vol 1 reverb speed .4 vol 1")
     }if(mode == "error"){
-      execSync("play --volume .1 /usr/share/sounds/freedesktop/stereo/suspend-error.oga speed .5 reverb")
+      execSync("play -q --volume .1 /usr/share/sounds/freedesktop/stereo/suspend-error.oga speed .5 reverb")
     }
     if(mode == "save"){
-      execSync("play /usr/share/sounds/freedesktop/stereo/service-login.oga speed .8 reverb")
+      execSync("play -q /usr/share/sounds/freedesktop/stereo/service-login.oga speed .8 reverb")
     }
   }
 
@@ -171,7 +238,7 @@ class Controler extends Configurator {
   // new name: "start_to_get_vacancies"
   // pega as vagas com base nas configs
   async startToGetVacancies() {
-    let vacanciesListDatas = []; // contera os dados das vagas pegas
+    let vacanciesListDatas: any[] = []; // contera os dados das vagas pegas
     const descriptions: { jobId: string; descricao: string }[] = []; // somente a descricao da vaga
     // teve que ser separado de "vacanciesListDatas" para facilitar seu uso com a IA.
 
@@ -181,15 +248,17 @@ class Controler extends Configurator {
       }
 
       // pega a lista <ul>
+      await this.#driver.sleep(10 * 1000)
       const lista = await this.#driver.wait(
         until.elementLocated(By.xpath(this.#elements.lista)),
         20 * 1000,
       );
 
       // <li>s
-      const elements = await lista.findElements(By.css(":scope > *"));
+      const elements = await lista.findElements(By.css(":scope > div > div > div > div > div > div > div"));
       console.log("pegou a lista");
       console.log(elements.length);
+      // return
       // return null
       let qtdVagasPegas = 1; // serve para mostrar os numeros de vagas pegas
       const p = async () =>
@@ -235,10 +304,22 @@ class Controler extends Configurator {
           console.log("\x1b[32m Vaga Nova! \x1b[0m");
         }
 
-        let title = await mainElementsTag[0]!.getText();
-        title = title.split("\n")[0]!;
-        const empresa = await mainElementsTag[1]!.getText();
-        const regiao = await mainElementsTag[2]!.getText();
+        console.log("\nPegando infos")
+        const waitTime = 60 * 1000
+        // let title = await mainElementsTag[0]!.getText();
+        let title: string | any = await this.#driver.wait(until.elementLocated(By.xpath(this.#elements.title)), waitTime)
+        title = await title.getText()
+        console.log("Titulo:", title)
+        // title = title.split("\n")[0]!;
+        
+        let empresa: string | any = await this.#driver.wait(until.elementLocated(By.xpath(this.#elements.empresa)), waitTime)
+        empresa = await empresa.getText()
+        console.log("Empresa", empresa)
+        
+        let regiao: string | any = await this.#driver.wait(until.elementLocated(By.xpath(this.#elements.regiao)), waitTime)
+        regiao = await regiao.getText()
+        console.log("Regiao", regiao)
+        // return
         let macthModalidade: any = regiao.match(
           /\((?<modalidade>[a-zA-ZÀ-ú]+)\)$/,
         );
@@ -249,8 +330,15 @@ class Controler extends Configurator {
         }
         const dt_publicado =
           await this.modules.utils.getANDTranformPublishedDate();
+        console.log("Data:", dt_publicado)
         // pega a descricao, e os requisitos com IA
-        const descricao = await this.modules.utils.getDescriptionsInfos();
+        const descricao = await this.modules.utils.getDescriptionsInfos(jobId); // verificar por que o XPath nao ta funcionando.
+        console.log("Descricao:", descricao)
+
+        // document.evaluate('//*[@id="JobDetails_AboutTheJob_4479184981}"]/div/div/div/p', document, null, XPathResult, null).singleNodeValue
+
+        // let link: URL | string = new URL(currentUrl)
+        let link = `https://linkedin.com/jobs.search-results/?currentJobId=${jobId}&keywords=x`
 
         const dadosGerais = {
           jobid: jobId, // serra usado para colocar a descricao no respectivo lugar
@@ -259,10 +347,26 @@ class Controler extends Configurator {
           cidade: regiao,
           keywords: this.#configs.keywords,
           plataforma: this.#configs.site,
-          link: currentUrl,
+          link: link,
           modalidade: macthModalidade,
           dt_publicacao: dt_publicado,
         };
+
+        if(
+          dadosGerais.titulo.length > 200 ||
+          dadosGerais.empresa.length > 200 ||
+          dadosGerais.cidade.length > 200 ||
+          dadosGerais.link.length > 200 ||
+          dadosGerais.cidade.length > 100
+        ){
+          // console.log(dadosGerais.titulo)
+          // console.log(dadosGerais.empresa)
+          // console.log(dadosGerais.cidade)
+          // console.log(dadosGerais.link)
+          // console.log(dadosGerais.cidade)
+          throw new Error("Quantidade de caracteres exedida!")
+        }
+
         descriptions.push({ jobId: String(jobId), descricao });
         vacanciesListDatas.push(dadosGerais);
         console.log(`Qtd Minima: \x1b[34m${vacanciesListDatas.length}/${this.#configs.minQtdToAnalise} \x1b[0m`)
@@ -327,10 +431,15 @@ class Controler extends Configurator {
         await this.modules.db.saveVacancyOnDataBase(
           finalData,
         );
+        await fetch("https://ntfy.sh/automation_notification_nkgb", {method: "POST", headers: {"X-Sequence-ID": "get"}, body: `salvo ${finalData.length} vagas`})
         vacanciesListDatas = []
         this.playAudios("save")
       }
     }
+    
+    await fetch("https://ntfy.sh/automation_notification_nkgb", 
+      {method: "POST", body: `Automacao acabdou de pegar todas as vagas!`}
+    )
     console.log("\x1b[1;35mTerminou!");
     this.playAudios("end")
   }

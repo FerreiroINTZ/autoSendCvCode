@@ -6,8 +6,7 @@ import {
     UserConfig,
     ListaDeSites,
     Elements
-} from "../types/types$schemas.js"
-import { config } from "dotenv"
+} from "@Tipos/mainType.js"
 
 class ControlerConfigurator{
 
@@ -102,19 +101,33 @@ class ControlerConfigurator{
         {
             linkedin: {
                 // xpath
-                lista: '//*[@id="main"]/div/div[2]/div[1]/div/ul',
+                lista: '/html/body/div[1]/div[1]/div[2]/div[2]/main/div/div[2]/div/div[1]/div/div',
+                
+                // /html/body/div[1]/div[1]/div[2]/div[2]/main/div/div[2]/div/div[1]/div/div/div[1]/div/div/div/div
+                // /html/body/div[1]/div[1]/div[2]/div[2]/main/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div
+                // /html/body/div[1]/div[1]/div[2]/div[2]/main/div/div[2]/div/div[1]/div/div/div[3]/div/div/div/div 
                 // css
-                singleVacancy: `:scope > li`,
-                title: `//div[@class="ember-view"]/span[1]/strong`,
-                empresa: `//*[@id="ember153"]/span`,
-                regiao: `//*[@id="ember154"]/ul/li/span`,
-                vacancyDescriptionTag: `//*[@id="job-details"]/div/p`,
-                publishDate: '//*[@id="main"]/div/div[2]/div[2]/div/div[2]/div/div[2]/div[1]/div/div[1]/div/div[1]/div/div[3]/div/span',
+                singleVacancy: `:scope > div > div > div > div > div > div > div`,
+
+                // //*[@id="workspace"]/div/div[2]/div/div[1]/div/div/div[2]/div/div/div/div/div/div/div[1]/div[1]/div/div[1]/p/span[2]
+
+                title: `//*[@id="workspace"]/div/div[2]/div/div[2]/div/div[2]/div/div/div/div[1]/div/div[2]/div/div[1]/div[2]`,
+                empresa: `//*[@id="workspace"]/div/div[2]/div/div[2]/div/div[2]/div/div/div/div[1]/div/div[2]/div/div[1]/div[1]/div/a/div/p/a`,
+                regiao: `//*[@id="workspace"]/div/div[2]/div/div[2]/div/div[2]/div/div/div/div[1]/div/div[2]/div/div[1]/p/span[1]`,
+
+
+                vacancyDescriptionTag: `/html/body/div[1]/div[1]/div[2]/div[2]/main/div/div[2]/div/div[2]/div/div[2]/div/div/div/div[4]/div[3]/div/div/div/p`,
+                
+                // //*[@id="workspace"]/div/div[2]/div/div[2]/div/div[2]/div/div/div/div[1]/div/div[2]/div/div[1]/p/span[4]
+
+                // /html/body/div[1]/div[1]/div[2]/div[2]/main/div/div[2]/div/div[2]/div/div[2]/div/div/div/div[4]/div[3]/div/div/div/p/span
+                // /html/body/div[1]/div[1]/div[2]/div[2]/main/div/div[2]/div/div[2]/div/div[2]/div/div/div/div[1]/div/div[2]/div/div[1]/p/span[4]
+                publishDate: '/html/body/div[1]/div[1]/div[2]/div[2]/main/div/div[2]/div/div[2]/div/div[2]/div/div/div/div[1]/div/div[2]/div/div[1]/p/span[4]',
                 pagingTag: (site: string): string => {
                     switch (site) {
                         case "linkedin":
                                 // usa arrray pra achar
-                                return 'button[data-testid]'
+                                return '//*[@id="workspace"]/div/div[2]/div/div[1]/div/div/div[26]/button[2]/span/span'
                         case "indeed":
                             // usa um query selector simples
                             return 'a[aria-label="Próxima página"'

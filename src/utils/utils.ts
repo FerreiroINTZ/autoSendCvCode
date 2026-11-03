@@ -1,6 +1,6 @@
 import {
   Elements
-} from "../types/types$schemas"
+} from "../types/otherTypes"
 
 import {until, By} from "selenium-webdriver"
 
@@ -73,10 +73,15 @@ export default class ControlerUtils {
   }
 
   // pega o texto da descricao
-  async getDescriptionsInfos(){
+  async getDescriptionsInfos(jobId: string){
 
+    console.log("Pegando a descricao...")
+    console.log("JobId:", jobId)
+    await this.#driver.sleep(5000)
+    console.log("Esperou")
     // colocar um wait para a tag ul, aqui
-    const descriptionTag = this.#driver.findElement(By.xpath(this.#elements.vacancyDescriptionTag))
+    // //*[@id="JobDetails_AboutTheJob_4483884527"]/div/div/div
+    const descriptionTag = await this.#driver.wait(until.elementLocated(By.xpath(`//*[@id="JobDetails_AboutTheJob_${jobId}"]/div/div/div`)), 20000)
     const descText = await descriptionTag.getText()
     const requisitos: string[] = []
 

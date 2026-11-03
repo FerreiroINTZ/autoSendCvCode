@@ -1,6 +1,6 @@
 import {
   Elements
-} from "./types/types$schemas"
+} from "./types/otherTypes"
 
 import {until, By} from "selenium-webdriver"
 

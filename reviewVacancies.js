@@ -1,12 +1,12 @@
 const {Builder} = require("selenium-webdriver")
 const chrome = require("selenium-webdriver/chrome")
-const Contoler = require("./dist/Controler")
+const Contoler = require("./dist/Controler.js")
 require("dotenv").config()
 
 async function main(){
 
     const options = new chrome.Options()
-    options.addArguments("user-data-dir=driver",
+    options.addArguments("user-data-dir=driver_dir",
         "--window-size=1000,800"
     )
 

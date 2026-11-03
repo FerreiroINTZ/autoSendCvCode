@@ -4,7 +4,7 @@ import {
     DescriptionSchemaParsed,
     AiModels,
     modelsAvailable
-} from "../types/types$schemas"
+} from "@Tipos/mainType.js"
 import Utils from "../utils/utils"
 
 export default class AIControler{
@@ -122,6 +122,12 @@ export default class AIControler{
                     responseJsonSchema: DescriptionSchemaParsed
                 }
             })
+            console.log("======================")
+            console.log(resp)
+            console.log("======================")
+            if(!resp.text!.includes("{")){
+                console.log(resp.text)
+            }
             const json = JSON.parse(resp.text!)
             // console.log(resp)
             // console.log(json)
@@ -152,8 +158,7 @@ export default class AIControler{
                     return false
                 }
 
-                // colocar no utils
-                await Utils.waitTime(10, "sec")
+                await Utils.waitTime(20, "sec")
 
                 this.#maxTries -= 1
                 console.log("Tentativa: ", this.#maxTries)
